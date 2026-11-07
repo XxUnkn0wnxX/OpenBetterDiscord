@@ -12,7 +12,7 @@ const components = {
     rX: () => null,
     Menu: () => null
 };
-const moduleId = scenario === "rspack" ? "477782" : "legacy-menu";
+const moduleId = scenario === "rspack" || scenario === "unicode" ? "477782" : "legacy-menu";
 const parserSource = [
     `n(${moduleId})`,
     "Menu API only allows Items and groups of Items as children",
@@ -23,17 +23,19 @@ const parserSource = [
     ".type===e.Dr)return e.push({type:\"customitem\",",
     ".type===e.rX){x{type:\"groupstart\""
 ].join(";");
-const currentFactorySource = "477782(e,t,n){\"use strict\";n.d(t,{},{Dr:function(e){return null},Yn:function(e){return null},aK:function(e){return null},bX:function(){return null},fP:function(e){return null},iD:function(e){return null},rX:function(e){return null},sL:function(e){return null}})}";
+const currentFactorySource = scenario === "unicode"
+    ? "477782(e,t,n){\"use strict\";n.d(t,{},{Dr:function(e){return null},aK:function(e){return null},bX:function(e){return null},é:function(){return null},fP:function(e){return null},iD:function(e){return null},rX:function(e){return null},sL:function(e){return null}})}"
+    : "477782(e,t,n){\"use strict\";n.d(t,{},{Dr:function(e){return null},Yn:function(e){return null},aK:function(e){return null},bX:function(){return null},fP:function(e){return null},iD:function(e){return null},rX:function(e){return null},sL:function(e){return null}})}";
 const legacyFactorySource = ["a", "b", "c", "d", "e"].map(name => `function ${name}(${name}){return null}`).join("");
 const sourceModule = (source: string) => Object.assign(() => {}, {toString: () => source});
 const requireModule = (id: string) => {
     if (scenario === "missing") throw new Error(`Unexpected require: ${id}`);
-    expect(id).toBe(scenario === "rspack" ? "477782" : "legacy-menu");
+    expect(id).toBe(scenario === "rspack" || scenario === "unicode" ? "477782" : "legacy-menu");
     return components;
 };
 Object.assign(requireModule, {
     m: scenario === "missing" ? {} : {
-        ...(scenario === "rspack" ? {477782: sourceModule(currentFactorySource)} : {"legacy-menu": sourceModule(legacyFactorySource)}),
+        ...(scenario === "rspack" || scenario === "unicode" ? {477782: sourceModule(currentFactorySource)} : {"legacy-menu": sourceModule(legacyFactorySource)}),
         parser: sourceModule(parserSource)
     },
     c: {}

@@ -123,6 +123,18 @@ if (scenario === "empty") {
         expect(Object.getOwnPropertyDescriptor(contextMenuStyles.exports, "Xs")).toEqual({value: "iconItem_Wx6SnQ iconBase_Wx6SnQ", enumerable: false, configurable: true, writable: true});
         expect(contextMenuStyles.exports[Symbol.for("BetterDiscord.Polyfilled.class")]).toBe(true);
 
+        const falsePositiveFactory: any = function(moduleInstance: any) {
+            moduleInstance.exports = {kL: "container_pog62O", Pl: "guilds_pog62O"};
+        };
+        falsePositiveFactory.toString = () => "123(m){mXexports={kL:'container_pog62O',Pl:'guilds_pog62O'}}";
+        selected.push([[9], {992: falsePositiveFactory}]);
+        const falsePositiveModule: any = {exports: {}};
+        req.m[992](falsePositiveModule, falsePositiveModule.exports, req);
+        expect(falsePositiveModule.exports.kL).toBe("container_pog62O");
+        expect(falsePositiveModule.exports.Pl).toBe("guilds_pog62O");
+        expect(falsePositiveModule.exports.container).toBeUndefined();
+        expect(falsePositiveModule.exports.guilds).toBeUndefined();
+
         const beforeReactDiscovery = idleCallbacks.length;
         selected.push([[7], {903: function(reactFactoryModule: any) {reactFactoryModule.exports.createElement = () => null;}}]);
         const reactModule: any = {exports: {}};

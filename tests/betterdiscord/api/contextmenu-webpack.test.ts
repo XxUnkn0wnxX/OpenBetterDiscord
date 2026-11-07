@@ -3,7 +3,7 @@ import path from "node:path";
 
 const cwd = path.join(import.meta.dir, "../../..");
 
-for (const scenario of ["legacy", "rspack", "missing"]) {
+for (const scenario of ["legacy", "rspack", "unicode", "missing"]) {
     test(`ContextMenu fallback discovery handles ${scenario} webpack modules`, () => {
         const result = Bun.spawnSync({
             cmd: [process.execPath, "test", "--timeout", "15000", path.join(import.meta.dir, "contextmenu-webpack-harness.ts")],

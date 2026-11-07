@@ -35,7 +35,9 @@ expected consecutive named function declarations and found no module. During
 renderer initialization, the subsequent `webpackRequire(undefined)` aborted
 BetterDiscord before its normal logger started.
 
-Recognize both the legacy declarations and the observed inline value exports.
+Through upstream `42562e12`, use upstream's Unicode-aware matcher for legacy
+declarations and inline value exports. This replaces the fork's ASCII-only
+matcher; the discovery fixtures cover both forms and Unicode export names.
 Only require and inspect the component module when discovery returns an ID;
 otherwise retain the existing incomplete ContextMenu state without aborting
 unrelated initialization. Preserve the existing parser, component identities,
@@ -49,8 +51,10 @@ startup or plugin-menu pass. Focused regression coverage exercises the old and
 new factory shapes and missing discovery through the real ContextMenu module.
 Fresh release/runtime validation remains a separate gate.
 
-This is a temporary internal compatibility adaptation. Retire it when upstream
-supports the same generated forms and missing-discovery behavior. It changes
+The custom discovery matcher is retired. The missing-ID guard remains a temporary
+internal compatibility adaptation: upstream still requires the discovered module
+unconditionally. Retire that guard when upstream handles missing discovery without
+aborting initialization. This changes
 neither the installed wrapper nor macOS recovery, OpenAsar coordination,
 updater policy or plugin contracts.
 
@@ -73,9 +77,14 @@ confirm ShowHiddenChannels finds all required variables and BetterFolders
 enables, installs its folder patch and rerenders the guild list. This evidence
 does not establish every plugin feature's behavior.
 
-Retire this adaptation when upstream's classname detector supports the same
-factory forms. Independent plugin selectors for other Discord modules remain
-separate compatibility questions.
+Upstream `98d9c62a` now recognizes one-argument factories, already covered here,
+and escapes the literal dot in `.exports`; adopt that literal-dot correction.
+Retain the older three-argument form, scientific-notation module IDs and optional
+strict-mode prefix, which upstream's simplified detector no longer accepts.
+Regression fixtures preserve those forms and reject lookalike export properties.
+Retire the remaining detector adaptation when upstream supports the same factory
+forms. Independent plugin selectors for other Discord modules remain separate
+compatibility questions.
 
 ## Release 1.14.5 through a89825d5
 
