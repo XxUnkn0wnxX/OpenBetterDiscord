@@ -122,6 +122,102 @@ not a new native validation claim. The affected native-window group passes 19
 tests with 54 assertions in 3.60 seconds, and the early-loader wrapper passes
 with five outer assertions in 2.28 seconds. Scoped ESLint passes.
 
+## Managed release ASAR and normal Bun commands
+
+**Build compatibility target:** Adapted to support Bun **1.1.20** on macOS Big Sur
+**11.7.1**. The command changes use Bun tooling; they do not add renderer or Electron
+APIs. Native Windows/Linux installation remains unverified; their path behavior is
+covered by resolver fixtures. See the [Bun workflow guide](build-and-injection.md).
+
+Normal package commands now cover build, release packing, injection and removal
+without requiring the macOS Zsh wrappers. `bunfig.toml` explicitly selects Bun's
+built-in package-script shell, which is supported by the pinned version. The
+historical `/usr/local/opt/bash` failure was not reproduced on the current host;
+the verified claim is portable command execution on Bun 1.1.20, including nested
+scripts, environment assignments and argument forwarding. The `inject` alias uses
+the existing TypeScript backend, and `uninject` exposes its existing backend.
+The `dev` build alias selects unpacked output; `release` selects the packaged and
+staged release pipeline. The existing `build` and `dist` commands retain their
+respective meanings so current callers keep working.
+
+[`scripts/dist.ts`](../scripts/dist.ts) runs production building and packing in
+order, forwarding build options only to the build step. Timeout precedence is
+explicit flag, existing environment value, then a 45-second distribution default;
+direct builds retain 90 seconds. Invalid values and failed or interrupted child
+commands stop the distribution rather than packing stale inputs. Keep both normal
+Bun and Zsh entrypoints aligned. The macOS-only wrappers default to `release`;
+explicit `dev` and `dist` select unpacked development files, and `build` remains
+a build alias. The normal `bun run dist` command remains the packaged release
+pipeline. Build, inject and uninject wrapper dry-runs do not change files or
+processes. Close all users of the shared ASAR before replacing it.
+
+Normal Bun injection/removal also closes the selected client and leaves it closed.
+The macOS path retains the wrappers' graceful quit, bounded wait and targeted
+termination; Linux and Windows use basic branch-specific process lookup and stop.
+Native Windows/Linux/WSL shutdown is unverified. Uninject prepares macOS recovery
+before quitting and retains the existing rollback if removal fails. Preflight and
+mode validation run before shutdown; dry-run, check and preparation-only paths do
+not close the client. A mode mismatch refuses changes and identifies the matching
+mode or explicit `auto`; `dev` and `dist` both describe marker mode `dev`.
+Normal uninject also retains interruption rollback for a recovery-disabled marker
+created by that operation while the owned wrapper is still installed. Explicit
+preparation and pre-existing disabled state remain persistent.
+
+Earlier entries record `./local-build.zsh dist` as the release command under the
+old wrapper. For current release preparation use `./local-build.zsh release`;
+those older command receipts remain historical evidence.
+
+The [managed-release helper](../scripts/helpers/managedrelease.ts) resolves the
+current user's standard configuration directory, matching the BDCLI/installer
+layout, and appends `BetterDiscord/data/betterdiscord.asar`. It uses the macOS
+home/Application Support location, Windows `APPDATA` with an operating-system home
+fallback, or Linux's absolute `XDG_CONFIG_HOME` with the normal home fallback.
+No personal home or checkout path is embedded in the source. Publication creates
+missing parent directories recursively; the [path query](../scripts/managed-release-path.ts)
+and dry-run paths remain read-only.
+
+Packing retains `dist/betterdiscord.asar` and the eight-input checksum manifest.
+It waits for the archive's writable stream to finish, verifies all eight packed
+entries against captured inputs, detects input changes and propagates checksum
+failures. Installed publication copies to a unique sibling, validates that copy
+and atomically replaces the managed ASAR. Copy, validation or rename failure
+preserves the previous managed archive and removes only that operation's temporary
+file. Affirmatively enabled CI builds skip installed publication while retaining
+the same verified distributable outputs. CI does not change release injection's
+source path.
+
+Native release injection reads the managed ASAR; explicit development injection
+continues to use unpacked `dist/`. Preserve the existing `dist` sanity checks.
+WSL is a deliberate compatibility exception: packing stages the Linux managed
+archive, which injection copies to the existing Windows-side payload directory
+while retaining the Windows-relative loader. This is not native Windows AppData
+installation. Do not redirect a Windows loader to a Linux absolute path.
+
+The `.betterdiscord-inject.json` filename, `owner: "betterdiscord"`,
+`__betterdiscord_inject_meta__`, installation identity, wrapped payload layout,
+PID ownership and recovery/OpenAsar handoff remain stable. These are functional
+compatibility identifiers, not display branding. Uninject remains marker-driven,
+accepts older checkout-based installations and missing ASARs, restores the original
+payload and leaves the shared archive and user data intact. The standalone Discord
+install manager's existing classifier accepts both source paths; its source was
+not changed. Fork labels and report presentation continue to use Open BetterDiscord.
+
+Verification on Bun 1.1.20: the full local suite passes **596 tests, 24 skipped,
+0 failed**, with full ESLint, root TypeScript checking, fresh declaration generation
+and the strict declaration consumer passing. Forty-nine native dry-run commands
+cover release/dev/dist and default modes; expected mismatches refuse changes, and
+installed wrapper files, recovery state and the managed ASAR stay unchanged. A
+separate Node fixture with an ASAR adapter executes the generated loader after
+renaming its source checkout, loading Open BetterDiscord before the preserved
+payload. This proves the path/order contract in isolation, not native Electron
+startup. Recovery reconstruction and interruption-rollback fixtures also pass.
+
+Keep these behavior-level contracts when adapting upstream. An upstream equivalent
+may replace the internal helper or command workaround once its completion, failure,
+path and dry-run behavior are verified on the pinned toolchain. A clean textual
+merge alone does not establish equivalence. Native startup, update recovery and
+OpenAsar handoff remain separate runtime checks after a verified release build.
+
 ## Open BetterDiscord branding and footer diagnostics
 
 Fork-owned UI labels, editor/window titles, commands, loading text, generated
@@ -740,14 +836,17 @@ process-relaunch guidance. Development and injection instructions remain macOS
 focused, with Big Sur and pinned older Discord clients, the `develop` branch,
 local Zsh wrappers, the pinned Bun toolchain, and release-ASAR verification.
 Upstream's `development` PR target and generic injection command are omitted;
-the latter currently points at a missing `scripts/inject.js` in the manifest,
-while the actual script is `scripts/inject.ts`.
+at that checkpoint the latter pointed at a missing `scripts/inject.js` in the
+manifest while the actual backend was `scripts/inject.ts`. The later
+[managed-release workflow](#managed-release-asar-and-normal-bun-commands) repairs
+the alias and provides normal Bun build, inject and uninject commands.
 
 This range changes no application source, plugin API, dependencies, workflows,
 or build/injection behavior. Verification is limited to the documentation diff,
 local links, referenced paths/commands, and ancestry. No runtime or release
-build result is claimed. Future merges should keep this macOS contribution
-workflow while adopting applicable upstream documentation improvements.
+build result is claimed for that historical checkpoint. The later managed-release
+workflow supersedes wrapper-only entrypoints; preserve the macOS compatibility
+and release-verification rules when adopting upstream documentation improvements.
 
 ## Optional provider tokens for addon updates
 

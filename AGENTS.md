@@ -17,6 +17,13 @@
   when taking upstream hunks. Keep stable
   API/type/global/path/protocol/ASAR identifiers and actual upstream attribution
   literal; branding is not an API or installed-data migration.
+- Branding is currently presentation and artwork only. Keep the runtime archive
+  `betterdiscord.asar`, preserved payload `betterdiscord.app.asar`, data directory
+  `BetterDiscord`, marker `.betterdiscord-inject.json`, owner `betterdiscord` and
+  loader signature `__betterdiscord_inject_meta__` unchanged. Do not rename them
+  to Open BetterDiscord variants: OBD recovery, OpenAsar and external installation
+  tools depend on these identifiers. A future naming migration needs explicit
+  user direction and coordinated backward compatibility across all consumers.
 - Preserve `local-build.zsh`, `local-inject.zsh`, and `local-uninject.zsh`.
 - Treat `.tmp/` as local-only scratch; never commit it unless explicitly asked.
 - `.gitignore` excludes `.tmp/`, `mergedocs/`, and `.venv/` as local-only files.
@@ -206,24 +213,33 @@ For rolling-release CI, verify the intended `develop-latest` target and assets.
 - After all upstream adaptations, run required full local validation once. Fix
   actual failures and rerun affected checks; avoid unrelated cleanup. Reuse
   passing evidence for unchanged source when only documentation changes.
-- Dev loop: `./local-build.zsh build --module=betterdiscord`, then—only when
+- Dev loop: `./local-build.zsh dev --module=betterdiscord`, then—only when
   authorized—`./local-inject.zsh <stable|ptb|canary> dev`; this points at unpacked
   `dist/` and is for quick iteration only.
 - Final release verification: after required source checks and the final commit,
-  run `./local-build.zsh dist -mrts 45`, then—only when authorized—
+  run `bun run release -mrts 45` (or `./local-build.zsh release -mrts 45`),
+  then—only when authorized—
   `./local-inject.zsh <stable|ptb|canary>`. Release injection uses
+  the detected per-user `BetterDiscord/data/betterdiscord.asar` copy, staged from
   `dist/betterdiscord.asar`; rebuilding only `betterdiscord.js` is insufficient.
   Rebuild after any later commit so bundle metadata matches HEAD. Verify all
   eight inputs in both packed/unpacked releases against checksums; search source/built output
   for temporary trace markers.
-- Every local fork-validation `dist` build uses `-mrts 45`, matching CI; the
+- The macOS Zsh wrappers default to `release`; explicit `dev` and `dist` are
+  aliases for unpacked development files. Keep their `--dry-run` paths read-only.
+  Normal cross-platform Bun equivalents are documented in
+  `docs/build-and-injection.md`; `bun run dev` builds unpacked files, while
+  `bun run release` and the legacy `bun run dist` build the packaged release.
+  Injection/removal closes only the selected client and leaves it closed.
+- Every local fork-validation release build uses `-mrts 45`, matching CI; the
   underlying direct-build default remains 90 seconds.
 - For runtime lookup or injection changes, verify the affected behavior directly;
   reinject Stable through the final release flow for injection changes, and
   spot-check PTB/Canary when client differences are possible.
-- `./local-uninject.zsh <client>` restores stock. Its optional
-  `auto|release|dev` argument validates the loader mode before restoration and
-  recognizes this fork's macOS absolute `/dist/betterdiscord.asar` loader.
+- `./local-uninject.zsh <client>` restores stock. It defaults to release; an optional
+  `auto|release|dev|dist` argument validates the loader mode before restoration and
+  recognizes both the managed data ASAR and this fork's older macOS absolute
+  `/dist/betterdiscord.asar` loader; removal does not delete shared user data.
 
 ## Runtime Audit Workflow
 
@@ -327,7 +343,8 @@ Docs, ignore rules, and release metadata:
 
 Wrapper and injector details:
 
-- `scripts/inject.ts` runs sanity checks against `dist/`, even when release injection points at `dist/betterdiscord.asar`
+- `scripts/inject.ts` runs sanity checks against `dist/`, even when release injection
+  loads the detected per-user `BetterDiscord/data/betterdiscord.asar` copy
 - Windows/Linux injector, uninjector, and migration discovery supports both `app-X.Y.Z` and plain `X.Y.Z` directories, but only when they contain the modern application ASAR/wrapper payload; do not restore desktop-core-only injection
 - if upstream changes injection structure again, preserve this fork's current cross-platform discovery, local wrappers, macOS recovery/PID/logging, and Open BetterDiscord/OpenAsar handoff plumbing; adapt only the required target layout and paths (currently Open BetterDiscord lives in `Contents/Resources/app/`, followed by the stock or OpenAsar payload in `Contents/Resources/betterdiscord.app.asar`) unless the user explicitly approves replacing the plumbing
 - macOS installed recovery uses `/usr/bin/env zsh -f` with a fixed system `PATH` and a small environment allowlist; Bun remains build/manual injection tooling only

@@ -45,6 +45,31 @@ describe("app wrapper injection", () => {
         expect(inspectInjection(resources).kind).toBe("wrapped");
     });
 
+    test("migrates an old dist wrapper to shared release and unwraps independently of its archive", () => {
+        const managed = path.join(resources, "home", "BetterDiscord", "data", "betterdiscord.asar");
+        fs.mkdirSync(path.dirname(managed), {recursive: true}); fs.writeFileSync(managed, "shared release");
+        fs.writeFileSync(path.join(resources, "app.asar"), "payload");
+        const first = wrapInjection({resources, channel: "stable", mode: "release", bdPath: "/old/dist/betterdiscord.asar"});
+        const second = wrapInjection({resources, channel: "stable", mode: "release", bdPath: managed});
+        expect(second.installationId).toBe(first.installationId); expect(second.bdPath).toBe(managed);
+        expect(inspectInjection(resources).kind).toBe("wrapped");
+        unwrapInjection(resources); expect(fs.readFileSync(managed, "utf8")).toBe("shared release");
+        wrapInjection({resources, channel: "stable", mode: "release", bdPath: managed});
+        fs.rmSync(managed); unwrapInjection(resources); expect(fs.readFileSync(path.join(resources, "app.asar"), "utf8")).toBe("payload");
+    });
+
+    test("switches release to dev and back while preserving identity and Discord payload", () => {
+        fs.writeFileSync(path.join(resources, "app.asar"), "original Discord payload");
+        const release = wrapInjection({resources, channel: "stable", mode: "release", bdPath: "/home/BetterDiscord/data/betterdiscord.asar"});
+        const dev = wrapInjection({resources, channel: "stable", mode: "dev", bdPath: "/checkout/dist"});
+        const restored = wrapInjection({resources, channel: "stable", mode: "release", bdPath: "/home/BetterDiscord/data/betterdiscord.asar"});
+        expect(dev.installationId).toBe(release.installationId); expect(restored.installationId).toBe(release.installationId);
+        expect(dev.mode).toBe("dev"); expect(restored.mode).toBe("release");
+        expect(inspectInjection(resources).kind).toBe("wrapped");
+        expect(fs.readFileSync(path.join(resources, "betterdiscord.app.asar"), "utf8")).toBe("original Discord payload");
+        unwrapInjection(resources); expect(fs.readFileSync(path.join(resources, "app.asar"), "utf8")).toBe("original Discord payload");
+    });
+
     test("accepts a legacy Bun runtime marker but removes it on reinjection", () => {
         fs.writeFileSync(path.join(resources, "app.asar"), "payload");
         const marker = wrapInjection({resources, channel: "stable", mode: "release", bdPath: "/fixture/betterdiscord.asar"});

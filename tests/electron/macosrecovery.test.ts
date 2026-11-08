@@ -94,6 +94,7 @@ describe("macOS update recovery", () => {
         const openAttemptsPath = path.join(root, "open-attempts");
         const registrationAttemptsPath = path.join(root, "registration-attempts");
         const directLaunchPath = path.join(root, "direct-launch");
+        const managedPath = path.join(root, "home", "Library", "Application Support", "BetterDiscord", "data", "betterdiscord.asar");
         const marker = {
             schema: 1,
             owner: "betterdiscord",
@@ -102,13 +103,13 @@ describe("macOS update recovery", () => {
             mode: "release",
             loader: "index.js",
             payload: "../betterdiscord.app.asar",
-            bdPath: "/fixture/betterdiscord.asar",
+            bdPath: managedPath,
             installationId,
         };
 
         fs.mkdirSync(resources, {recursive: true});
         fs.mkdirSync(snapshot, {recursive: true});
-        fs.writeFileSync(path.join(snapshot, "index.js"), "// __betterdiscord_inject_meta__\n");
+        fs.writeFileSync(path.join(snapshot, "index.js"), `// __betterdiscord_inject_meta__\nrequire(${JSON.stringify(managedPath)});\n`);
         fs.writeFileSync(path.join(snapshot, "package.json"), `${JSON.stringify({name: "discord", main: "./index.js"})}\n`);
         fs.writeFileSync(path.join(snapshot, ".betterdiscord-inject.json"), `${JSON.stringify(marker)}\n`);
         if (relaunchMode === "timeout") {
@@ -285,6 +286,9 @@ print -r -- "$((count + 1))" > "$root/registration-attempts"
 
         expect(run.result.status).toBe(0);
         expect(fs.readFileSync(path.join(run.resources, "betterdiscord.app.asar"), "utf8")).toBe("fresh Discord payload");
+        const restoredMarker = JSON.parse(fs.readFileSync(path.join(run.resources, "app", ".betterdiscord-inject.json"), "utf8"));
+        expect(restoredMarker.bdPath).toBe(path.join(root, "home", "Library", "Application Support", "BetterDiscord", "data", "betterdiscord.asar"));
+        expect(fs.readFileSync(path.join(run.resources, "app", "index.js"), "utf8")).toContain(JSON.stringify(restoredMarker.bdPath));
         expect(fs.existsSync(path.join(run.resources, "app", ".betterdiscord-inject.json"))).toBe(true);
         expect(JSON.parse(fs.readFileSync(run.readyPath, "utf8"))).toMatchObject({
             recoveryRunId: "test-run",

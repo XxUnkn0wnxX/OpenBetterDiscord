@@ -6,14 +6,17 @@ import doSanityChecks from "./helpers/validate";
 import buildPackage from "./helpers/package";
 import copyFiles from "./helpers/copy";
 import {findLatestDiscordResources} from "../src/common/discordResources";
-import {wrapInjection, type InjectionChannel, type InjectionMode} from "./helpers/injection";
+import {inspectInjection, wrapInjection, type InjectionChannel, type InjectionMode} from "./helpers/injection";
+import {managedReleasePath} from "./helpers/managedrelease";
+import {stopClient} from "./helpers/clientprocess";
 
 const rawArgs = process.argv.slice(2);
 const dryRun = rawArgs.includes("--dry-run");
 const args = rawArgs.filter(argument => argument !== "--dry-run");
-const useBdRelease = args[0]?.toLowerCase() === "release";
-if (useBdRelease) args.shift();
-if (args.length > 1) throw new Error("Usage: bun scripts/inject.ts [release] [stable|ptb|canary] [--dry-run]");
+const requestedMode = args[0]?.toLowerCase();
+const useBdRelease = requestedMode === "release";
+if (requestedMode === "release" || requestedMode === "dev" || requestedMode === "dist") args.shift();
+if (args.length > 1) throw new Error("Usage: bun scripts/inject.ts [release|dev|dist] [stable|ptb|canary] [--dry-run]");
 
 const requestedChannel = (args[0] ?? "stable").toLowerCase();
 if (requestedChannel !== "stable" && requestedChannel !== "ptb" && requestedChannel !== "canary" && requestedChannel !== "discord") {
@@ -25,7 +28,7 @@ const mode: InjectionMode = useBdRelease ? "release" : "dev";
 const release = channel === "canary" ? "Discord Canary" : channel === "ptb" ? "Discord PTB" : "Discord";
 const releaseDirectory = channel === "canary" ? "discordcanary" : channel === "ptb" ? "discordptb" : "discord";
 const distPath = path.resolve(__dirname, "..", "dist");
-const bundlePath = path.join(distPath, "betterdiscord.asar");
+const bundlePath = useBdRelease ? managedReleasePath() : "";
 
 const resources = await (async function resolveResources() {
     if (process.platform === "darwin") return path.join(path.sep, "Applications", `${release}.app`, "Contents", "Resources");
@@ -50,9 +53,17 @@ const resources = await (async function resolveResources() {
 })();
 
 doSanityChecks(distPath);
-if (!dryRun) buildPackage(distPath);
-if (useBdRelease && !fs.existsSync(bundlePath)) {
-    throw new Error("    ❌ File missing: betterdiscord.asar. Run `./local-build.zsh dist` before using release injection.");
+if (useBdRelease && (!fs.existsSync(bundlePath) || !fs.statSync(bundlePath).isFile())) {
+    throw new Error(`    ❌ Managed release missing: ${bundlePath}. Run \`bun run dist\` to stage the managed release before using release injection.`);
+}
+
+const layout = inspectInjection(resources);
+if (layout.kind === "missing" || layout.kind === "unsafe") throw new Error(`Refusing to inject ${release}: ${layout.reason}`);
+if (dryRun) console.log(`    [dry-run] Would close ${release} if running before injection`);
+if (!dryRun) {
+    console.log(`Checking and closing ${release} if it is running...`);
+    stopClient(channel);
+    buildPackage(distPath);
 }
 
 let bdPath = useBdRelease ? bundlePath : distPath;

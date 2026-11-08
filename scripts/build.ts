@@ -151,4 +151,7 @@ async function runBuild() {
     console.log("");
 }
 
-runBuild().catch(console.error);
+runBuild().catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+});

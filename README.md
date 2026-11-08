@@ -93,7 +93,7 @@ Prerequisites:
 - macOS with Discord Stable, PTB, or Canary installed normally;
 - [Bun](https://bun.sh/) **1.1.20**, the current temporary host-compatibility
   pin in `package.json`, available in `PATH`;
-- Git and Zsh.
+- Git and a standard command shell; the optional macOS wrappers require Zsh.
 
 ## :hammer_and_wrench: Build and inject
 
@@ -105,42 +105,86 @@ cd OpenBetterDiscord
 bun install
 ```
 
-Build a release ASAR and inject it into Discord Stable:
+<details>
+<summary>Direct Bun commands</summary>
+
+Build and stage a packaged release ASAR, then inject it into Stable:
 
 ```sh
-zsh local-build.zsh dist -mrts 45
-zsh local-inject.zsh stable
+bun run release -mrts 45
+bun run inject release stable
 ```
 
-The injector closes the selected Discord client before changing its wrapper.
-Open Discord again after the command finishes. Replace `stable` with `ptb` or
-`canary` when needed.
+Close every Discord channel before `bun run release`; it stages over the shared
+managed release ASAR. Normal Bun inject and uninject commands close only the
+selected channel and leave it closed. Dry-run, check, and prepare-only
+operations do not close a client. Replace `stable` with `ptb` or `canary` when
+needed.
 
-For a quick renderer-development loop:
+For local renderer development, inject the unpacked build:
 
 ```sh
-zsh local-build.zsh build --module=betterdiscord
-zsh local-inject.zsh stable dev
+bun run dev --module=betterdiscord
+bun run inject stable
 ```
 
-Use a release build for final runtime verification. The dev mode points Discord
-at the unpacked `dist/` output and is intended only for local iteration.
+Channel-only injection defaults to development mode. In direct injection,
+`bun run inject dist stable` also selects unpacked output. `bun run release`
+builds, packages, and stages the production release; the legacy `bun run dist`
+command remains equivalent. The legacy `bun run build` command remains the
+unpacked-build equivalent of `bun run dev`.
 
-## :wastebasket: Remove the fork
-
-Restore the payload that existed before Open BetterDiscord wrapped it:
+Restore the original payload with:
 
 ```sh
-zsh local-uninject.zsh stable auto
+bun run uninject stable auto
 ```
 
-This preserves a nested OpenAsar payload when one was already installed.
+Uninject preserves a nested OpenAsar payload and leaves the selected channel
+closed. It does not delete the shared managed ASAR or user data such as settings
+and plugins.
+
+These Bun commands do not require Zsh. Windows, Linux, and WSL paths are
+available to try, but native validation and the maintained runtime target are
+macOS. See the [Bun build and injection guide](docs/build-and-injection.md) for
+host-specific paths and command details.
+
+</details>
+
+<details>
+<summary>macOS wrappers</summary>
+
+The Zsh wrappers are macOS-only. Build and inject a packaged release with:
+
+```sh
+./local-build.zsh release -mrts 45
+./local-inject.zsh stable
+```
+
+With no mode, `local-build.zsh` also defaults to the packaged release, and
+`local-inject.zsh` defaults to release mode. The build wrapper does not close
+Discord; close all channels before it stages the shared release ASAR. The
+inject wrapper closes only the selected channel and leaves it closed.
+
+In wrapper commands, `./local-build.zsh dev` and `./local-build.zsh dist`
+produce unpacked development output, and `./local-inject.zsh stable dev` and
+`./local-inject.zsh stable dist` inject it. `local-build.zsh build` is the
+older alias for the same development build. This wrapper meaning of `dist`
+differs from the production package command `bun run release` (also available as
+legacy `bun run dist`). For removal,
+`./local-uninject.zsh stable` defaults to release mode, closes only Stable, and
+leaves it closed; `auto` remains available. See the
+[macOS wrapper and recovery guide](docs/manual-install.md) for mode details and
+dry-run options.
+
+</details>
 
 ## :book: Documentation
 
 | Guide | Find |
 | --- | --- |
-| [Build and injection](docs/manual-install.md) | Release/dev modes, dry runs, recovery, OpenAsar and removal |
+| [Build and injection with Bun](docs/build-and-injection.md) | Portable commands, managed release path, dry runs, host path behavior and removal |
+| [macOS wrappers and recovery](docs/manual-install.md) | Zsh wrappers, automatic client closing, recovery and OpenAsar |
 | [Plugin and theme updates](docs/addon-updater.md) | Sources, selection rules, scheduling and troubleshooting |
 | [Access tokens](docs/provider-tokens.md) | Token creation, permissions, validation and logs |
 | [Plugin API notes](docs/plugin-api-notes.md) | Optional helpers, examples and runtime evidence |

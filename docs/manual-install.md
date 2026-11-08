@@ -1,8 +1,9 @@
 # Manual macOS Build and Injection
 
-This guide covers the maintained macOS build and injection workflow. The local
-Zsh wrappers are the recommended path; direct Bun commands remain available for
-development and troubleshooting.
+This guide covers the optional macOS Zsh wrappers, automatic client closing,
+and Discord update recovery. For shell-portable Bun build, injection, managed
+release-path, dry-run, and removal commands, see the
+[Bun build and injection guide](build-and-injection.md).
 
 macOS Big Sur and pinned older Discord releases are active compatibility
 targets. The current audit covers Stable `0.0.350`–`0.0.402` (Electron 35 and
@@ -38,13 +39,18 @@ machine upgrade; keep local and Actions versions aligned. See the
 
 ## Quick release
 
+Close every Discord channel that can read the shared managed ASAR before
+building and staging. The build wrapper does not close Discord. The injector
+wrapper closes only its selected channel and leaves it closed.
+
 ```sh
-./local-build.zsh dist -mrts 45
+./local-build.zsh -mrts 45
 ./local-inject.zsh stable
 ```
 
-Fully restart Discord after injection. Replace `stable` with `ptb` or `canary`
-as needed. The wrapper closes the selected client before injection.
+With no mode, `local-build.zsh` runs its release mode; `-mrts 45` sets the
+workflow timeout. The wrapper closes the selected client before injection and
+leaves it closed. Replace `stable` with `ptb` or `canary` as needed.
 
 ## Build Open BetterDiscord With Bun
 
@@ -55,27 +61,31 @@ These are the normal build commands used by this repo.
 Build the unpacked output in `dist/`:
 
 ```sh
-bun scripts/build.ts
+bun run dev
 ```
 
 You can pass extra build arguments when needed, for example:
 
 ```sh
-bun scripts/build.ts --module=betterdiscord
+bun run dev --module=betterdiscord
 ```
+
+`bun run build` remains an equivalent legacy alias for this unpacked build.
 
 The macOS recovery helper waits up to 90 seconds by default. To stamp a
 different positive whole-number timeout into a build:
 
 ```sh
-bun scripts/build.ts --macos-recovery-timeout-seconds 45
-./local-build.zsh dist --macos-recovery-timeout-seconds 45
-./local-build.zsh -mrts 45
+bun run dev --macos-recovery-timeout-seconds 45
+./local-build.zsh release --macos-recovery-timeout-seconds 45
+./local-build.zsh --macos-recovery-timeout-seconds 45
 ```
 
-`-mrts` is a local-wrapper alias for
-`--macos-recovery-timeout-seconds`; the underlying Bun command uses only the
-long option.
+The wrapper's `-mrts` is an alias for `--macos-recovery-timeout-seconds`. No
+mode and explicit `release` both build the packaged release; `dev`, `dist`, and
+the older `build` mode produce unpacked development output. The wrapper's
+`dist` mode is not the same as the production pipeline in `bun run release`
+(legacy `bun run dist`).
 
 `BETTERDISCORD_MACOS_RECOVERY_TIMEOUT_SECONDS` provides the same build-time
 setting for GitHub Actions. OpenAsar adds its own short coordination grace
@@ -88,8 +98,10 @@ override keep the normal 90-second default.
 Build the minified production output in `dist/`:
 
 ```sh
-NODE_ENV=production bun scripts/build.ts --minify
+NODE_ENV=production bun run dev --minify
 ```
+
+`bun run build` remains the equivalent legacy build command.
 
 ### Pack The Release ASAR
 
@@ -99,24 +111,40 @@ Create `dist/betterdiscord.asar` from the built output:
 bun scripts/pack.ts
 ```
 
-`pack.ts` also writes `dist/checksums.txt` with SHA-256 entries for eight packed payload files. This records the payload-input hashes; it is not the hash of `betterdiscord.asar` itself.
+`pack.ts` writes `dist/checksums.txt` with SHA-256 entries for eight packed payload
+files and stages the verified ASAR at the managed release path. The checksum file
+records payload-input hashes, not the hash of `betterdiscord.asar` itself. Close
+every Discord channel before running pack because the managed release file is
+shared.
 
 ### Full Release Build
 
-Build and pack in one flow:
+Build, pack, verify, and stage the release in one flow:
 
 ```sh
-NODE_ENV=production bun scripts/build.ts --minify
-bun scripts/pack.ts
+bun run release -mrts 45
 ```
 
-Use the full release build before any release injection method.
+This keeps the packed ASAR and checksums in `dist/`, then publishes the verified
+ASAR at the standard managed release path. Legacy `bun run dist` is equivalent.
+Close all Discord channels first.
+See the [Bun guide](build-and-injection.md) for per-user path rules.
 
 ## Normal Bun Injection Methods
 
-The actual injection logic lives in [../scripts/inject.ts](../scripts/inject.ts). The wrapper script [../local-inject.zsh](../local-inject.zsh) calls that Bun script for you, but it does not perform the injection directly.
+The actual injection logic lives in [../scripts/inject.ts](../scripts/inject.ts). The wrapper script [../local-inject.zsh](../local-inject.zsh) calls that Bun script and adds macOS-specific client closing; it does not perform the injection directly.
 
-After any injection, fully restart the target Discord client.
+Direct Bun injection accepts a mode before the channel:
+`bun run inject [release|dev|dist] [stable|ptb|canary]`. `release` reads the
+managed release ASAR; `dev` and `dist` use unpacked development output. Passing
+only a channel defaults to `dev`. This differs from the package commands
+`bun run release` and legacy `bun run dist`, which build and stage a packaged
+release. It also differs from the macOS build wrapper's `dist` alias, which
+builds unpacked development output.
+
+Normal Bun injection and uninject commands close only the selected channel and
+leave it closed. Dry-run, check, and prepare-only operations do not close a
+client. Reopen Discord when you are ready to verify the result.
 
 The current injector uses Discord's application wrapper layout. It renames the
 existing `Contents/Resources/app.asar` to `betterdiscord.app.asar`, then creates
@@ -196,29 +224,31 @@ refuses instead of falling back to a top-level target.
 ### Development Injection
 
 Development injection points Discord at unpacked `dist/`. Build first with
-`bun scripts/build.ts`.
+`bun run dev` (`bun run build` remains equivalent).
 
 | Discord channel | Command |
 | --- | --- |
-| Stable | `bun scripts/inject.ts` |
-| PTB | `bun scripts/inject.ts ptb` |
-| Canary | `bun scripts/inject.ts canary` |
+| Stable | `bun run inject stable` |
+| PTB | `bun run inject ptb` |
+| Canary | `bun run inject canary` |
 
 ### Release Injection
 
-Release injection points Discord at `dist/betterdiscord.asar`. Build and pack
-first:
+Release injection reads the shared managed release ASAR. Build, pack, and stage
+it first:
 
 ```sh
-NODE_ENV=production bun scripts/build.ts --minify
-bun scripts/pack.ts
+bun run release -mrts 45
 ```
 
 | Discord channel | Command |
 | --- | --- |
-| Stable | `bun scripts/inject.ts release` |
-| PTB | `bun scripts/inject.ts release ptb` |
-| Canary | `bun scripts/inject.ts release canary` |
+| Stable | `bun run inject release stable` |
+| PTB | `bun run inject release ptb` |
+| Canary | `bun run inject release canary` |
+
+The Bun command and macOS wrapper both close only the selected channel and
+leave it closed. Dry-run does not close the client.
 
 ## Local Zsh Wrappers
 
@@ -228,10 +258,11 @@ These local helpers are:
 - [../local-inject.zsh](../local-inject.zsh)
 - [../local-uninject.zsh](../local-uninject.zsh)
 
-These are the maintained macOS workflow. They recognize `Discord`, `Discord
+These wrappers are macOS-only. They recognize `Discord`, `Discord
 PTB`, and `Discord Canary`, quit through AppleScript, and detect processes via
-the `.app/Contents/MacOS/` layout. Use direct Bun commands for individual
-development or diagnostic steps.
+the `.app/Contents/MacOS/` layout. Each wrapper supports a read-only
+`--dry-run`; the build wrapper does not build or write files in dry-run mode.
+Use direct Bun commands for portable build and injection workflows.
 
 ### `local-build.zsh`
 
@@ -240,20 +271,30 @@ This wrapper runs the repository build and pack commands without prompting.
 Usage:
 
 ```sh
-./local-build.zsh [build|production|pack|dist] [options]
+./local-build.zsh [release|dev|dist|build] [options] [--dry-run]
 ```
 
 | Mode | Action |
 | --- | --- |
-| `build` | Runs `bun scripts/build.ts`; accepts build options such as `--module=betterdiscord`. |
-| `production` | Runs `NODE_ENV=production bun scripts/build.ts --minify`. |
-| `pack` | Runs `bun scripts/pack.ts`. |
-| `dist` | Builds production output and packs the ASAR. |
+| Omitted or `release` | Builds and minifies production output, packs and verifies the release ASAR, then stages it at the managed path. |
+| `dev`, `dist`, or older `build` | Builds unpacked development output in `dist/`; accepts options such as `--module=betterdiscord`. |
+| `--dry-run` | Reports the selected mode without building or writing files. |
 
-Options may follow the mode. A timeout option may also come first, in which
-case the wrapper uses its default `dist` mode. For the maintained workflow,
-pass `-mrts 45`; the long form is `--macos-recovery-timeout-seconds 45`.
+Options may follow the mode. With no mode, a timeout option uses the default
+`release` mode. For the maintained workflow, pass `-mrts 45`; the long form is
+`--macos-recovery-timeout-seconds 45`.
 `--help` prints wrapper usage.
+
+Examples:
+
+```sh
+./local-build.zsh
+./local-build.zsh release
+./local-build.zsh dev --module=betterdiscord
+./local-build.zsh dist --module=betterdiscord
+./local-build.zsh build --module=betterdiscord
+./local-build.zsh --dry-run
+```
 
 ### `local-inject.zsh`
 
@@ -262,16 +303,17 @@ This wrapper stops the selected Discord client, then calls the Bun injector.
 Usage:
 
 ```sh
-./local-inject.zsh [stable|ptb|canary] [release|dev] [--dry-run]
+./local-inject.zsh [stable|ptb|canary] [release|dev|dist] [--dry-run]
 ```
 
 | Input | Behavior |
 | --- | --- |
 | Channel omitted | Prompts for `stable`, `ptb`, or `canary`. |
 | Mode omitted | Defaults to `release`. |
-| `release` | Uses `dist/betterdiscord.asar`. |
-| `dev` | Uses `dist/betterdiscord.js`. |
-| `--dry-run` | Does not stop Discord or change files; prints the proposed wrapper changes. |
+| `release` | Uses the shared managed release ASAR. |
+| `dev` or `dist` | Uses the unpacked development output in `dist/`. |
+| Normal injection | Closes only the selected channel and leaves it closed. |
+| `--dry-run` | Reports the proposed wrapper changes without closing Discord or changing files. |
 
 Examples:
 
@@ -279,7 +321,7 @@ Examples:
 ./local-inject.zsh
 ./local-inject.zsh stable
 ./local-inject.zsh ptb release
-./local-inject.zsh canary dev
+./local-inject.zsh canary dist
 ./local-inject.zsh stable release --dry-run
 ```
 
@@ -288,23 +330,28 @@ Examples:
 This wrapper removes Open BetterDiscord's owned `Contents/Resources/app/` loader and
 renames `betterdiscord.app.asar` back to `app.asar`. It does not inspect or
 replace the restored payload, so an OpenAsar payload remains OpenAsar.
+It does not delete the shared managed ASAR or user data such as settings,
+plugins, or themes.
 
 Usage:
 
 ```sh
-./local-uninject.zsh [stable|ptb|canary] [auto|release|dev] [--dry-run]
+./local-uninject.zsh [stable|ptb|canary] [release|dev|dist|auto] [--dry-run]
 ```
 
 | Input | Behavior |
 | --- | --- |
 | Channel omitted | Prompts for `stable`, `ptb`, or `canary`. |
-| Mode omitted | Defaults to `auto`, the least strict mode. |
-| `release` or `dev` | Also verifies that the loader matches the selected injection style. |
-| Normal uninject | Checks the layout before acting. |
-| `--dry-run` | Validates and reports the layout without stopping Discord or changing files. |
-| Open BetterDiscord not installed | A normal uninject exits successfully without disabling recovery or stopping Discord. |
+| Mode omitted | Defaults to `release`. |
+| `release` | Verifies the wrapper uses the managed release ASAR. |
+| `dev` or `dist` | Both verify the unpacked development loader. |
+| `auto` | Explicitly detects the installed mode. |
+| Mode mismatch | Refuses before changes and reports the matching mode or `auto`. |
+| Normal uninject | Closes only the selected channel and leaves it closed. |
+| `--dry-run` | Validates and reports the layout without closing Discord or changing files. |
+| Open BetterDiscord not installed | A normal uninject exits successfully without disabling recovery or closing Discord. |
 
-`auto` is usually the easiest choice when removing Open BetterDiscord's wrapper.
+`auto` remains available when you do not want to specify the installed mode.
 
 Examples:
 
@@ -312,7 +359,7 @@ Examples:
 ./local-uninject.zsh
 ./local-uninject.zsh stable
 ./local-uninject.zsh ptb auto
-./local-uninject.zsh canary dev
+./local-uninject.zsh canary dist
 ./local-uninject.zsh stable auto --dry-run
 ```
 

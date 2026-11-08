@@ -5,21 +5,23 @@ import {execFileSync} from "child_process";
 
 import {findLatestDiscordResources} from "../src/common/discordResources";
 import {inspectInjection, unwrapInjection, type InjectionChannel} from "./helpers/injection";
+import {stopClient} from "./helpers/clientprocess";
 
 const rawArgs = process.argv.slice(2);
 const dryRun = rawArgs.includes("--dry-run");
 const prepare = rawArgs.includes("--prepare");
 const check = rawArgs.includes("--check");
 const args = rawArgs.filter(argument => argument !== "--dry-run" && argument !== "--prepare" && argument !== "--check");
-if (args.length > 2) throw new Error("Usage: bun scripts/uninject.ts [stable|ptb|canary] [auto|release|dev] [--prepare|--check|--dry-run]");
+if (args.length > 2) throw new Error("Usage: bun scripts/uninject.ts [stable|ptb|canary] [auto|release|dev|dist] [--prepare|--check|--dry-run]");
 
 const requestedChannel = (args[0] ?? "stable").toLowerCase();
 if (requestedChannel !== "stable" && requestedChannel !== "ptb" && requestedChannel !== "canary" && requestedChannel !== "discord") {
     throw new Error("Channel must be stable, ptb, or canary");
 }
 const channel: InjectionChannel = requestedChannel === "discord" ? "stable" : requestedChannel;
-const requestedMode = (args[1] ?? "auto").toLowerCase();
-if (requestedMode !== "auto" && requestedMode !== "release" && requestedMode !== "dev") throw new Error("Mode must be auto, release, or dev");
+const modeArg = (args[1] ?? "auto").toLowerCase();
+const requestedMode = modeArg === "dist" ? "dev" : modeArg;
+if (requestedMode !== "auto" && requestedMode !== "release" && requestedMode !== "dev") throw new Error("Mode must be auto, release, dev, or dist");
 
 const release = channel === "canary" ? "Discord Canary" : channel === "ptb" ? "Discord PTB" : "Discord";
 const releaseDirectory = channel === "canary" ? "discordcanary" : channel === "ptb" ? "discordptb" : "discord";
@@ -60,7 +62,7 @@ if (check) {
     }
     if (layout.kind === "unsafe") throw new Error(`Refusing to uninject ${release}: ${layout.reason}`);
     if (requestedMode !== "auto" && layout.marker.mode !== requestedMode) {
-        throw new Error(`Refusing to uninject ${release} as ${requestedMode}; marker says ${layout.marker.mode}`);
+        throw new Error(`Refusing to uninject ${release} as ${requestedMode}; marker says ${layout.marker.mode}; use ${layout.marker.mode} or auto`);
     }
     process.exit(0);
 }
@@ -200,7 +202,7 @@ if (layout.kind === "plain-asar" || layout.kind === "plain-directory" || layout.
 }
 if (layout.kind === "unsafe") throw new Error(`Refusing to uninject ${release}: ${layout.reason}`);
 if (requestedMode !== "auto" && layout.marker.mode !== requestedMode) {
-    throw new Error(`Refusing to uninject ${release} as ${requestedMode}; marker says ${layout.marker.mode}`);
+    throw new Error(`Refusing to uninject ${release} as ${requestedMode}; marker says ${layout.marker.mode}; use ${layout.marker.mode} or auto`);
 }
 if (!dryRun) assertRecoveryMarkerSafe();
 const copiedWslPayload = process.env.WSL_DISTRO_NAME
@@ -209,8 +211,31 @@ const copiedWslPayload = process.env.WSL_DISTRO_NAME
     : "";
 
 console.log(`${dryRun ? "Dry-run for" : "Uninjecting from"} ${release}`);
-if (!dryRun) disableMacRecovery();
+if (dryRun) console.log(`    [dry-run] Would close ${release} if running before uninjecting`);
+function rollbackOwnedRecovery() {
+    if (recoveryDisabledByThisRun && inspectInjection(resources).kind === "wrapped") {
+        fs.rmSync(recoveryDisabled, {force: true});
+    }
+}
+const onInterrupt = () => {
+    try {rollbackOwnedRecovery();}
+    finally {process.exit(130);}
+};
+const onTerminate = () => {
+    try {rollbackOwnedRecovery();}
+    finally {process.exit(143);}
+};
+const handleSignals = !dryRun && process.platform === "darwin";
+if (handleSignals) {
+    process.once("SIGINT", onInterrupt);
+    process.once("SIGTERM", onTerminate);
+}
 try {
+    if (!dryRun) {
+        disableMacRecovery();
+        console.log(`Checking and closing ${release} if it is running...`);
+        stopClient(channel);
+    }
     unwrapInjection(resources, dryRun, message => console.log(`    ${dryRun ? "[dry-run] " : ""}${message}`));
     if (copiedWslPayload) {
         if (dryRun) console.log(`    [dry-run] Would remove copied WSL payload ${copiedWslPayload}`);
@@ -218,10 +243,13 @@ try {
     }
 }
 catch (error) {
-    const currentLayout = inspectInjection(resources);
-    if (recoveryDisabledByThisRun && currentLayout.kind === "wrapped") {
-        fs.rmSync(recoveryDisabled, {force: true});
-    }
+    rollbackOwnedRecovery();
     throw error;
+}
+finally {
+    if (handleSignals) {
+        process.removeListener("SIGINT", onInterrupt);
+        process.removeListener("SIGTERM", onTerminate);
+    }
 }
 console.log(dryRun ? `Dry-run complete; ${release} was not modified.` : `Open BetterDiscord uninjected from ${release}.`);

@@ -11,15 +11,18 @@
         "build:preload": "bun run build --module=preload",
         "build:betterdiscord": "bun run build --module=betterdiscord",
         "build:production": "NODE_ENV=production bun run build --minify",
-        "inject": "bun scripts/inject.js",
+        "inject": "bun scripts/inject.ts",
+        "uninject": "bun scripts/uninject.ts",
         "lint": "bun run --bun eslint",
         "lint-css": "stylelint src/betterdiscord/styles/*.css && stylelint src/betterdiscord/styles/**/*.css",
         "test": "bun test tests/",
-        "dist": "bun run build:production && bun scripts/pack.ts",
+        "dist": "bun scripts/dist.ts",
         "api": "bun run --bun jsdoc -X -r renderer/src/modules/api/ > dist/jsdoc-ast.json",
         "circulars": "bun run --bun dpdm -T --no-warning --no-tree src/betterdiscord/index.js",
         "typecheck": "tsc",
-        "generate-types": "bun scripts/types"
+        "generate-types": "bun scripts/types",
+        "dev": "bun scripts/build.ts",
+        "release": "bun scripts/dist.ts"
     },
     "devDependencies": {
         "@electron/asar": "^3.2.0",

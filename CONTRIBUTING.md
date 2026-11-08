@@ -2,15 +2,18 @@
 
 Thanks for helping improve Open BetterDiscord.
 
-This guide covers macOS development, including Big Sur and pinned older
-Discord releases. Use the local Zsh wrappers for building and injection.
+This guide covers development with Bun and runtime verification on macOS,
+including Big Sur and pinned older Discord releases. The normal Bun commands
+work without Zsh; the local wrappers remain optional macOS tools for automatic
+client closing.
 
-**Guide:** [Fork changes](docs/fork-specific-changes.md) · [Build and inject](docs/manual-install.md) · [Build and test](#build-and-test) · [Runtime verification](#runtime-verification-on-macos) · [Report a bug](#reporting-bugs)
+**Guide:** [Fork changes](docs/fork-specific-changes.md) · [Build and inject](docs/build-and-injection.md) · [macOS wrappers and recovery](docs/manual-install.md) · [Build and test](#build-and-test) · [Runtime verification](#runtime-verification-on-macos) · [Report a bug](#reporting-bugs)
 
 Please follow the [Code of Conduct](CODE_OF_CONDUCT.md). Before changing a
 fork-sensitive area, also read:
 
-- [Manual macOS build and injection](docs/manual-install.md)
+- [Bun build and injection](docs/build-and-injection.md)
+- [Manual macOS wrappers and recovery](docs/manual-install.md)
 - [Fork-specific changes and upstream policy](docs/fork-specific-changes.md)
 
 Changes intended only for the upstream BetterDiscord project should be proposed
@@ -52,17 +55,19 @@ code is split by where it runs inside Discord:
 | `src/common/` | Code shared across process boundaries |
 | `scripts/` | Build, pack, inject, uninject, and resource-discovery tooling |
 | `tests/` | Bun tests for shared, renderer, Electron, and wrapper behavior |
-| `docs/` | Fork behavior and manual installation guides |
+| `docs/` | Fork behavior, Bun build/injection, and macOS wrapper guides |
 
 ## Build and test
 
-Run the checks relevant to the files you changed. The normal complete gate is:
+Run the checks relevant to the files you changed. Close every Discord channel
+before the final `dist` command because it replaces the shared managed ASAR.
+The normal complete gate is:
 
 ```sh
 bun ./node_modules/eslint/bin/eslint.js
 bun ./node_modules/typescript/bin/tsc --noEmit
 bun test --timeout 10000 tests/
-zsh local-build.zsh -mrts 45
+bun run release -mrts 45
 ```
 
 For targeted TypeScript/TSX linting:
@@ -83,24 +88,35 @@ their normal test coverage.
 For quick renderer iteration:
 
 ```sh
-zsh local-build.zsh build --module=betterdiscord
-zsh local-inject.zsh stable dev
+bun run dev --module=betterdiscord
+bun run inject stable
 ```
 
-After renderer changes, rebuild before reloading Discord. To rebuild
-automatically, run `bun scripts/build.ts --watch --module=betterdiscord` in
-another terminal. Main-process and preload changes require a full Discord
-relaunch.
+Close every Discord channel before `bun run release`, which replaces the shared
+managed ASAR. Normal Bun inject and uninject commands close only the selected
+channel and leave it closed; dry-run, check, and prepare-only operations do not
+close a client. After renderer changes, rebuild before reopening Discord. To
+rebuild automatically, run
+`bun run dev --watch --module=betterdiscord` in another terminal. Main-process
+and preload changes require a full Discord relaunch.
+
+`bun run release` builds and stages the packaged release; legacy `bun run dist`
+remains equivalent. In contrast, `bun run inject dist stable` selects unpacked
+development output, like the direct injector's `dev` mode. The macOS wrapper
+uses `dist` as a development alias too; see the
+[mode guide](docs/build-and-injection.md).
 
 Before calling an injected change complete, use the release ASAR:
 
 ```sh
-zsh local-build.zsh -mrts 45
-zsh local-inject.zsh stable
+bun run release -mrts 45
+bun run inject release stable
 ```
 
 Open Discord after injection and verify the affected behavior directly. Use PTB
-or Canary only when the change could differ by Discord channel.
+or Canary only when the change could differ by Discord channel. The optional
+macOS `local-inject.zsh` wrapper is documented in the
+[wrapper guide](docs/manual-install.md).
 
 ## Protected fork behavior
 
