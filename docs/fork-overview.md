@@ -34,6 +34,7 @@ range does not mean every version has passed native validation.
 | Update policy | Open BetterDiscord core update checks stay dormant at startup, on the scheduler and from the Updates panel. Plugin/theme checks and the Addon Store remain active. |
 | Disabled addon behavior | Disabled plugins and libraries stay disabled; no library receives a special loading bypass. |
 | Recovery reporting | The recovery screen can open drafts for supported GitHub, GitLab.com and git.slowb.ro (Forgejo) repositories. Reports include a collapsed Client Info block and are never submitted automatically. When no supported source is available, **Manual report** copies the formatted report and Client Info to the clipboard. |
+| Addon settings UI | The Addon Settings Location preference selects Full Page (default) or Floating Modal using the existing provider. Full-page settings also have an explicit Back action in addition to the breadcrumb, returning to the addon list without closing Discord Settings. |
 | Keyboard focus feedback | An optional scoped indicator makes keyboard focus easier to see in Open BetterDiscord controls without changing focus order or native UI outside Open BetterDiscord. |
 | Release provenance | The rolling `develop-latest` release includes the ASAR and checksums for all eight payload inputs. Build metadata records the branch and commit for verification and support. |
 

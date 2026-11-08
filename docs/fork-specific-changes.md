@@ -388,6 +388,63 @@ Electron version branch. Its native layout, real panel interaction and older-cli
 audit remain pending after final release verification; source fixtures do not
 establish a native pass. See [Plugin API notes](plugin-api-notes.md#addon-settings-navigation).
 
+### Addon settings location
+
+The Addon Settings Location dropdown in Open BetterDiscord Settings offers
+**Full Page** (the upstream default) and **Floating Modal**. The normal settings
+store supplies defaults, persistence, validation and localized option labels.
+The choice is captured when a settings view opens and applies to the next
+opening; changing it does not rebuild or move an already-open plugin panel.
+
+Both modes call the same standard provider once with its original receiver.
+Modal mode passes the raw provider result to the existing identity-aware modal
+helper, without mounting or converting it inline first. The card, Settings menu
+and public openSettings API share the same decision point, with enabled-state
+and owner/unload guards intact. No plugin API signature changes. Plugins that
+open their own windows retain control of those windows; this preference chooses
+the OBD wrapper rather than intercepting arbitrary plugin UI. Preserve this
+explicit user display preference in future adaptations.
+
+The fork also provides an explicit, localized Back button in addition to the
+breadcrumb. It uses the existing idempotent route-close action, returning to the
+addon list while keeping Discord Settings open.
+
+### Legacy settings providers without a returned panel
+
+**Adapted to support Electron 35.x–37.x.** The observed case is on Stable
+Electron 37.6.0. This correction concerns the settings-provider return contract,
+not a missing Electron API. Some existing plugins open their own settings UI
+inside `getSettingsPanel()` and return `null` or `undefined`. The new upstream
+page treats this as an error even though the plugin UI opens. The previous
+card always passed that result to the legacy modal helper; plugins may rely on
+its wrapper and Done button to complete their own modal cleanup.
+
+The compatibility path is universal and uses only the standard provider result.
+DOM, HTML, function and React panel results keep the new full-page UI, including
+valid falsy React content. A successful nullish return opens the existing
+identity-aware legacy wrapper once, then returns the full-page route to the
+addon list. The provider is evaluated once with its original instance receiver.
+The handoff rechecks the current addon object, instance and enabled state before
+opening; owner loss or matching unload cannot open a stale settings wrapper.
+Missing providers, thrown provider errors and wrapper-opening failures retain
+normal settings error feedback. There are no plugin-name checks, private plugin
+methods, global modal interception or disabled-addon exceptions.
+
+A nullish result alone cannot prove that a plugin opened its own UI. An
+accidentally empty provider therefore gets the same empty legacy wrapper it
+received previously. Returning a panel remains the preferred path. Retire this
+internal fallback only when upstream demonstrably preserves the same successful
+nullish-return handoff, ownership and cleanup behavior. Native retesting must
+check one legacy provider, reopening/closing it, and a normal returned panel;
+source fixtures alone do not establish the fixed client result.
+
+The follow-up passes the full local suite (**598 passed, 24 skipped, 0 failed**),
+full ESLint, root TypeScript and fresh declaration/consumer checks. Focused
+fixtures additionally prove that the same returned component mounts inline in
+page mode and does not mount inline in modal mode. Astra reviewed the universal
+fallback, mode capture, raw-result handoff and ownership/error guards. Native
+legacy-modal interaction remains a separate release-injected check.
+
 ## 1.14.6 controls and table settings through 033d4cb1
 
 The reviewed range is `42562e12..033d4cb1`, pinned to

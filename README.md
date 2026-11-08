@@ -48,6 +48,7 @@ workflow below, not upstream installer downloads.
 | Update policy | Open BetterDiscord core checks remain dormant. Plugin and theme updates and the Addon Store remain available. |
 | Plugin loading | Disabled plugins and libraries remain disabled; libraries receive no loading bypass. |
 | Recovery reports | Drafts supported GitHub, GitLab.com and git.slowb.ro reports with Client Info; Manual report copies details when no supported source is available. |
+| Addon settings UI | Choose the upstream full-page view or a floating modal. An explicit Back button returns from full-page settings to the list without closing Discord Settings. |
 | Keyboard focus | A scoped visible indicator improves keyboard-focus feedback in Open BetterDiscord controls without changing focus order. |
 | Release provenance | The rolling `develop-latest` release includes the ASAR and eight-input checksums, with branch/commit build metadata. |
 

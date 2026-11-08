@@ -71,7 +71,14 @@ same method exists on `BdApi.Themes`; themes without a settings provider return
 guarantee that the provider later returns valid content.
 
 Existing DOM, string, function and React panel results remain supported, and the
-provider retains its instance receiver. Matching unload or loss of the opened
+provider retains its instance receiver. Returning a panel is preferred for the
+full-page view. The host's Addon Settings Location preference can instead choose
+the existing floating modal; it uses the same provider and applies on the next
+opening. Providers do not need to detect or implement this preference. For older providers that open their own UI and successfully
+return `null` or `undefined`, the fork uses the existing legacy modal wrapper
+instead of reporting a false missing-panel error. This fallback is based only on
+the return value; it adds no plugin-specific API or enablement exception.
+Matching unload or loss of the opened
 instance exits the page without evaluating its replacement. The fork's modal
 unload protection, controlled search/title behavior and detached-editor focus
 contracts remain internal adaptations; plugins need no alternate public API.

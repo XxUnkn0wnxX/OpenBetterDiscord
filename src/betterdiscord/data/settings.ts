@@ -21,6 +21,7 @@ const DefaultSettings = [
         collapsible: true,
         shown: false,
         settings: [
+            {type: "dropdown", id: "settingsLocation", value: "page", options: [{value: "page"}, {value: "modal"}]},
             {type: "switch", id: "addonErrors", value: true},
             {type: "dropdown", id: "editAction", value: "detached", options: [{value: "detached"}, {value: "external"}, {value: "system"}]},
             {type: "switch", id: "checkForUpdates", value: true},

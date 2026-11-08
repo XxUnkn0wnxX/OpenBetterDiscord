@@ -1,5 +1,5 @@
 import Logger from "@common/logger";
-import React, {useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, type ReactNode} from "react";
+import React, {useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode} from "react";
 import {t} from "@common/i18n";
 import {ChevronRightIcon} from "lucide-react";
 import SimpleMarkdown from "@structs/markdown";
@@ -7,6 +7,8 @@ import Toasts from "@stores/toasts";
 import Modals from "@ui/modals";
 import ErrorBoundary from "@ui/errorboundary";
 import Text from "@ui/base/text";
+import Button from "@ui/base/button";
+import SettingsStore from "@stores/settings";
 import SettingsTitle from "@ui/settings/title";
 import {useStateFromStores} from "@ui/hooks";
 import {SettingsTitleContext} from "@ui/settings";
@@ -21,6 +23,7 @@ function sameSnapshot(left: {addon: Plugin; instance: Plugin["instance"];} | nul
 export default function AddonSettingsPage({addonId}: {addonId: string;}) {
     const {title, store, closeSettings} = useContext(addonContext);
     const set = useContext(SettingsTitleContext);
+    const [settingsLocation] = useState(() => SettingsStore.get<string>("settings", "addons", "settingsLocation") === "modal" ? "modal" : "page");
     const snapshot = useStateFromStores(store, () => {
         const addon = store.addonList.find(entry => entry.id === addonId) as Plugin | undefined;
         if (!addon) return null;
@@ -30,6 +33,8 @@ export default function AddonSettingsPage({addonId}: {addonId: string;}) {
     const isOwned = Boolean(owner && sameSnapshot(owner, snapshot) && store.isEnabled(addonId));
     const rootRef = useRef<HTMLDivElement>(null);
     const closed = useRef(false);
+    const legacyFallbackAttempted = useRef(false);
+    const [fallbackError, setFallbackError] = useState<Error | null>(null);
 
     const close = useCallback(() => {
         if (closed.current) return;
@@ -37,19 +42,37 @@ export default function AddonSettingsPage({addonId}: {addonId: string;}) {
         closeSettings();
     }, [closeSettings]);
 
-    const panel = useMemo<{content: ReactNode; error: Error | null;} | null>(() => {
+    const panel = useMemo<{result: unknown; content: ReactNode | null; error: Error | null;} | null>(() => {
         if (!owner || !isOwned) return null;
         const instance = owner.instance;
-        if (!instance || typeof instance.getSettingsPanel !== "function") return {content: null, error: new Error("No settings panel")};
+        if (!instance || typeof instance.getSettingsPanel !== "function") return {result: null, content: null, error: new Error("No settings panel")};
         try {
             const next = instance.getSettingsPanel();
-            if (next == null) return {content: null, error: new Error("No settings panel")};
-            return {content: Modals.createAddonSettingsContent(next), error: null};
+            if (next == null || settingsLocation === "modal") return {result: next, content: null, error: null};
+            return {result: next, content: Modals.createAddonSettingsContent(next), error: null};
         }
         catch (err) {
-            return {content: null, error: err instanceof Error ? err : new Error(String(err))};
+            return {result: null, content: null, error: err instanceof Error ? err : new Error(String(err))};
         }
-    }, [owner, isOwned]);
+    }, [owner, isOwned, settingsLocation]);
+
+    const shouldOpenModal = settingsLocation === "modal" || panel?.result == null;
+
+    useEffect(() => {
+        if (!owner || !isOwned || !panel || panel.error || !shouldOpenModal || closed.current || legacyFallbackAttempted.current) return;
+        legacyFallbackAttempted.current = true;
+
+        const current = store.addonList.find(entry => entry.id === addonId) as Plugin | undefined;
+        if (current !== owner.addon || current?.instance !== owner.instance || !store.isEnabled(addonId)) return;
+
+        try {
+            Modals.showAddonSettingsModal(addonText(owner.addon.name), panel.result as Parameters<typeof Modals.showAddonSettingsModal>[1], {id: addonId, type: store.prefix});
+            close();
+        }
+        catch (err) {
+            setFallbackError(err instanceof Error ? err : new Error(String(err)));
+        }
+    }, [addonId, close, isOwned, owner, panel, shouldOpenModal, store]);
 
     const titleName = isOwned && owner ? addonText(owner.addon.name) : null;
 
@@ -87,10 +110,11 @@ export default function AddonSettingsPage({addonId}: {addonId: string;}) {
     }, [isOwned, close]);
 
     useEffect(() => {
-        if (!panel?.error || titleName == null) return;
+        const error = panel?.error ?? fallbackError;
+        if (!error || titleName == null) return;
         Toasts.show(t("Addons.settingsError", {name: titleName}), {type: "error"});
-        Logger.stacktrace("Addon Settings", "Unable to get settings panel for " + titleName + ".", panel.error);
-    }, [panel, titleName]);
+        Logger.stacktrace("Addon Settings", "Unable to get settings panel for " + titleName + ".", error);
+    }, [fallbackError, panel, titleName]);
 
     if (!isOwned || !owner) return null;
 
@@ -106,6 +130,9 @@ export default function AddonSettingsPage({addonId}: {addonId: string;}) {
     return (
         <div ref={rootRef} className="bd-addon-settings">
             <div className="bd-addon-settings-intro">
+                <Button size={Button.Sizes.SMALL} look={Button.Looks.LINK} grow={false} onClick={close}>
+                    <ChevronRightIcon size="16px" style={{transform: "rotate(180deg)"}} /> {t("Paginator.back")}
+                </Button>
                 <div className="bd-addon-settings-heading">
                     <span className="bd-addon-settings-name">{name}</span>
                     {version && <span className="bd-addon-settings-version">v{version}</span>}
@@ -114,7 +141,7 @@ export default function AddonSettingsPage({addonId}: {addonId: string;}) {
                 {description && <div className="bd-description bd-addon-settings-description">{SimpleMarkdown.parseToReact(description)}</div>}
             </div>
             <div className="bd-addon-settings-panel">
-                {panel?.error
+                {panel?.error || fallbackError
                     ? <Text color={Text.Colors.STATUS_RED}>{t("Addons.settingsError", {name})}</Text>
                     : <ErrorBoundary id={`addon-settings-${addon.id}`} name="Addon Settings">{panel?.content}</ErrorBoundary>}
             </div>

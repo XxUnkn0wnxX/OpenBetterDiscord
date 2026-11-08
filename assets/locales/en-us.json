@@ -151,6 +151,14 @@
             },
             "addons": {
                 "name": "Addon Manager",
+                "settingsLocation": {
+                    "name": "Addon Settings Location",
+                    "note": "Choose whether addon settings open in the full page or a floating modal. This choice applies the next time addon settings are opened.",
+                    "options": {
+                        "page": "Full Page",
+                        "modal": "Floating Modal"
+                    }
+                },
                 "addonErrors": {
                     "name": "Show Addon Errors",
                     "note": "Shows a modal with plugin/theme errors"

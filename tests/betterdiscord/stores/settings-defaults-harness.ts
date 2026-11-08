@@ -2,12 +2,17 @@ import {mock} from "bun:test";
 
 
 type SettingsState = Record<string, Record<string, unknown>>;
-type Scenario = "missing" | "missing-setting" | "saved-false" | "saved-true" | "legacy-store-disabled" | "reset";
+type Scenario = "missing" | "missing-setting" | "saved-false" | "saved-true" | "legacy-store-disabled" | "saved-modal" | "invalid-settings-location" | "reset";
 
 const scenario = process.env.SETTINGS_DEFAULTS_SCENARIO as Scenario;
 const stored: SettingsState | undefined = scenario === "missing"
     ? undefined
-    : {store: scenario === "missing-setting" ? {} : scenario === "legacy-store-disabled" ? {bdAddonStore: false} : {alwaysEnable: scenario === "saved-true"}};
+    : {
+        store: scenario === "missing-setting" ? {} : scenario === "legacy-store-disabled" ? {bdAddonStore: false} : {alwaysEnable: scenario === "saved-true"},
+        addons: scenario === "saved-modal" || scenario === "reset"
+            ? {settingsLocation: "modal"}
+            : scenario === "invalid-settings-location" ? {settingsLocation: "unknown"} : {}
+    };
 const writes: SettingsState[] = [];
 
 const jsonStore = {
@@ -36,14 +41,21 @@ assert(setting?.defaultValue === true, `Expected alwaysEnable defaultValue to be
 assert(Settings.getSetting("settings", "store", "bdAddonStore") === undefined, "Expected the removed Addon Store checkbox to be absent.");
 assert(Settings.get<boolean>("settings", "store", "bdAddonStore") === undefined, "Expected the removed Addon Store checkbox to have no active setting value.");
 assert(Settings.getSetting("settings", "store", "addonEmbeds")?.disabled === undefined, "Expected addon embeds to have no Addon Store dependency.");
+const locationSetting = Settings.getSetting("settings", "addons", "settingsLocation");
+assert(locationSetting?.defaultValue === "page", `Expected settingsLocation defaultValue to be page, got ${String(locationSetting?.defaultValue)}.`);
+assert((locationSetting as any)?.options.map((option: {value: string;}) => option.value).join(",") === "page,modal", "Expected settingsLocation to offer page and modal options.");
 
 if (scenario === "reset") {
     assert(value === false, `Expected saved false before reset, got ${String(value)}.`);
     Settings.resetCollection("settings");
     assert(Settings.get<boolean>("settings", "store", "alwaysEnable") === true, "Reset did not restore alwaysEnable to true.");
     assert(writes.at(-1)?.store.alwaysEnable === true, "Reset did not persist alwaysEnable=true.");
+    assert(Settings.get<string>("settings", "addons", "settingsLocation") === "page", "Reset did not restore settingsLocation to page.");
+    assert(writes.at(-1)?.addons.settingsLocation === "page", "Reset did not persist settingsLocation=page.");
 }
 else {
     const expected = scenario === "missing" || scenario === "missing-setting" || scenario === "saved-true" || scenario === "legacy-store-disabled";
     assert(value === expected, `Expected alwaysEnable=${String(expected)}, got ${String(value)}.`);
+    const expectedLocation = scenario === "saved-modal" ? "modal" : "page";
+    assert(Settings.get<string>("settings", "addons", "settingsLocation") === expectedLocation, `Expected settingsLocation=${expectedLocation}.`);
 }

@@ -3,11 +3,11 @@ import path from "node:path";
 
 
 const cwd = path.join(import.meta.dir, "../../..");
-const scenarios = ["missing", "missing-setting", "saved-false", "saved-true", "legacy-store-disabled", "reset"] as const;
+const scenarios = ["missing", "missing-setting", "saved-false", "saved-true", "legacy-store-disabled", "saved-modal", "invalid-settings-location", "reset"] as const;
 
 describe("settings defaults", () => {
     for (const scenario of scenarios) {
-        test(`keeps the Addon Store always-enable default and persisted values (${scenario})`, () => {
+        test(`preserves settings defaults and persisted values (${scenario})`, () => {
             const harness = path.join(import.meta.dir, "settings-defaults-harness.ts");
             const result = Bun.spawnSync({
                 cmd: [process.execPath, "test", harness],
