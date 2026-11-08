@@ -422,11 +422,14 @@ watcher. Page ownership also subscribes to enabled-state changes. A stale Back
 callback cannot close a newer page, and an existing page can remain behind a new
 modal after its own ownership handoff completes.
 
-The full-page title row also provides an explicit, localized Back button before
-the breadcrumb. It inherits the title's font and theme color, with an accent
-hover treatment and keyboard-focus outline. It uses the existing idempotent
-route-close action, returning to the addon list while keeping Discord Settings
-open. Floating and plugin-owned modals do not receive this control.
+The full-page title row starts with a back arrow on the category breadcrumb,
+giving the layout `‹ Plugins › PluginName`. The leading breadcrumb is a real
+button with a localized Back accessibility label and keyboard-focus outline.
+Its text inherits the header typography; the arrows retain the accent hover
+treatment. The hover background fits the padded label while the larger click
+target stays transparent. The owned, idempotent close action returns to the
+addon list while keeping Discord Settings open. Floating and plugin-owned modals
+do not receive this control.
 
 ### Legacy settings providers without a returned panel
 

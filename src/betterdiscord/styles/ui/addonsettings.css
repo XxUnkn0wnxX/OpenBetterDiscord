@@ -16,8 +16,12 @@
     padding: 0;
 }
 
-.bd-addon-settings-back > svg {
+.bd-addon-settings-back svg {
     flex: none;
+}
+
+.bd-addon-settings-back-content > span {
+    font: inherit;
 }
 
 .bd-addon-title > .bd-addon-title-current > svg {
@@ -41,25 +45,36 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
     min-height: 36px;
-    padding: 0 10px;
+    padding: 0;
     border: 0;
     border-radius: 4px;
     background: transparent;
     color: inherit;
     font: inherit;
-    opacity: 0.8;
     cursor: pointer;
 }
 
-.bd-addon-settings-back:hover {
-    background: var(--interactive-background-hover);
-    color: var(--bd-brand);
-    opacity: 1;
+.bd-addon-settings-back-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font: inherit;
 }
 
-.bd-addon-settings-back:hover > svg {
+.bd-addon-settings-back:hover {
+    background: transparent;
+    color: inherit;
+}
+
+.bd-addon-settings-back:hover > .bd-addon-settings-back-content {
+    background: var(--interactive-background-hover);
+}
+
+.bd-addon-settings-back:hover svg {
+    color: var(--bd-brand);
     filter: drop-shadow(0 0 4px var(--bd-brand));
 }
 
@@ -71,10 +86,6 @@
 
 .bd-addon-title[data-showing-settings="true"] > .bd-addon-title-home {
     cursor: pointer;
-}
-
-.bd-addon-title[data-showing-settings="true"] > .bd-addon-title-home:hover {
-    background: var(--interactive-background-hover);
 }
 
 .bd-addon-settings {

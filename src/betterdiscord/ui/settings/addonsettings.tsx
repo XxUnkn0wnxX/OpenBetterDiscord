@@ -71,13 +71,14 @@ export default function AddonSettingsPage({payload, onClose}: {payload: Resolved
                 key="title"
                 text={(
                     <div className="bd-addon-title" data-showing-settings="true">
-                        <button type="button" className="bd-addon-settings-back" onClick={close} aria-label={t("Paginator.back")} title={t("Paginator.back")}>
-                            <ChevronRightIcon size="24px" style={{transform: "rotate(180deg)"}} />
-                            <span>{t("Paginator.back")}</span>
+                        <button type="button" className="bd-addon-settings-back bd-addon-title-home" onClick={close} aria-label={t("Paginator.back")}>
+                            <span className="bd-addon-settings-back-content">
+                                <ChevronRightIcon size="1em" style={{transform: "rotate(180deg) scale(1.3)"}} />
+                                <span>{title}</span>
+                            </span>
                         </button>
-                        <span className="bd-addon-title-home" onClick={close}>{title}</span>
                         <span className="bd-addon-title-current">
-                            <ChevronRightIcon size="24px" />
+                            <ChevronRightIcon size="1em" style={{transform: "scale(1.3)"}} />
                             <span>{titleName}</span>
                         </span>
                     </div>
