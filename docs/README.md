@@ -4,6 +4,7 @@
 
 | I want to… | Read |
 | --- | --- |
+| See what this fork intentionally adds or changes | [Fork overview](fork-overview.md) |
 | Build, inject or remove this fork | [Manual macOS installation](manual-install.md) |
 | Check or install plugin/theme updates | [Addon updater](addon-updater.md) |
 | Set up GitHub, GitLab or git.slowb.ro authentication | [Access tokens](provider-tokens.md) |

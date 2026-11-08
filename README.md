@@ -16,7 +16,8 @@
 [translate-link]: https://translate.betterdiscord.app
 
 An independent [BetterDiscord](https://github.com/BetterDiscord/BetterDiscord)
-fork focused on older macOS and pinned Discord/Electron builds. Build locally
+backport targeting older Discord clients on **macOS Big Sur 11.7.1** and pinned
+Discord/Electron builds. Build locally
 from `develop`, inject into a standard macOS Discord installation, then open
 Discord normally.
 
@@ -26,18 +27,23 @@ downloads.
 
 ## :sparkles: How this fork differs
 
+<details>
+<summary>Intentional fork features</summary>
+
 | Area | Fork behavior |
 | --- | --- |
-| macOS recovery | Keeps the application-ASAR wrapper, update recovery and identity-matched OpenAsar handoff. |
-| Local workflow | Zsh wrappers for release/dev builds, injection and safe removal on Stable, PTB or Canary. |
-| [Addon updates](docs/addon-updater.md) | Compares declared update URLs and Store candidates by identity and version; filenames alone cannot replace unrelated addons. |
-| [Access tokens](docs/provider-tokens.md) | Optional GitHub, GitLab and git.slowb.ro authentication with validated autosave and masked diagnostics. |
-| Core updates | BetterDiscord core checks stay disabled; plugin/theme checks and the Addon Store stay active. |
-| Plugin loading | Disabled plugins stay disabled, with no special treatment for libraries such as `0BDFDB.plugin.js`. |
-| Compatibility | Adapts internals for older runtimes while following upstream APIs, lifecycle changes and removal of obsolete hooks. |
-| Runtime fixes | Preserves Settings, Custom CSS/editor, Addon Store and Discord compatibility fixes. |
+| macOS workflow | Local wrappers build, inject and remove BetterDiscord on Stable, PTB or Canary. Update recovery preserves the application payload and coordinates with OpenAsar. |
+| [Addon updates](docs/addon-updater.md) | Selects eligible declared URLs and Store entries by addon identity and version; equal versions prefer the declared URL. |
+| [Access tokens](docs/provider-tokens.md) | Optional GitHub, GitLab.com and git.slowb.ro authentication for eligible managed addon updates, with validated settings and masked diagnostics. |
+| Update policy | BetterDiscord core checks remain dormant. Plugin and theme updates and the Addon Store remain available. |
+| Plugin loading | Disabled plugins and libraries remain disabled; libraries receive no loading bypass. |
+| Recovery reports | Drafts supported GitHub, GitLab.com and git.slowb.ro reports with Client Info; Manual report copies details when no supported source is available. |
+| Keyboard focus | A scoped visible indicator improves keyboard-focus feedback in BetterDiscord controls without changing focus order. |
 
-The [fork record](docs/fork-specific-changes.md) defines preservation and
+</details>
+
+See the concise [fork overview](docs/fork-overview.md) for the feature map. The
+[fork record](docs/fork-specific-changes.md) defines preservation and
 replacement criteria for future upstream merges, including reinjection review
 on a supported newer system.
 
@@ -48,11 +54,28 @@ installations on macOS. Upstream code may continue to support other operating
 systems, but Windows and Linux installation are outside this fork's supported
 workflow.
 
-macOS Big Sur is an active compatibility target. Current runtime review also
-covers pinned Discord Stable builds in the `0.0.350`-`0.0.402` range where
-practical. This means upstream features are checked for older Electron support;
-it does not guarantee that Discord will continue to serve or connect every
-historical client build.
+macOS Big Sur is an active compatibility target. Maintain compatibility with
+**Electron 35.x–37.x** for pinned Discord Stable builds in the
+`0.0.350`-`0.0.402` range. New upstream features must account for those older
+client runtimes, even when the development dependency uses a different Electron
+version. Use capability-based internal adaptations when a missing API is
+demonstrated, preserving upstream plugin contracts.
+
+Current pinned client targets, verified from installed application metadata on
+2026-11-08:
+
+| Discord branch | Discord version | Electron version |
+| --- | --- | --- |
+| Stable | `0.0.402` | `37.6.0` |
+| PTB | `0.0.248` | `37.6.0` |
+| Canary | `0.0.1205` | `37.6.0` |
+
+Electron **37.6.0** has recorded native validation in the
+[fork record](docs/fork-specific-changes.md); evidence remains specific to the
+feature and client tested. Local builds and tests use **Bun 1.1.20**, the
+temporary older-macOS tooling pin. Passing those checks does not establish a
+native pass on every target, and Discord may stop serving or connecting to
+historical client builds.
 
 Prerequisites:
 
