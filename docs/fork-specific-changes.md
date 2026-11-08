@@ -26,6 +26,45 @@ toolchain requirements.
 Integration sections retain their original evidence and revision context.
 [Documentation index](README.md) · [Project overview](../README.md)
 
+## Reviewed 1.14.6 ancestry through 033d4cb1
+
+The reviewed range is `42562e12..033d4cb1`, containing 19 upstream commits. The
+pinned target is `033d4cb1f6bb411130fa6f6271cd360d780e9624`; the final upstream
+fetch on 2026-11-08 still reports that head, with no newer range. This integration
+preserves those original commits as ancestors after the source adaptations below.
+It is a source-neutral history merge: the reviewed source is already committed,
+and this merge changes only the fork-contract record.
+
+| Group | Disposition and retained behavior | Adaptation commit |
+| --- | --- | --- |
+| Table, dropdown and settings controls | Adapt internally: upstream schema/UI with explicit providers, live disabled-state and callback ownership, token renderer and two demonstrated reliability corrections. | `2a887ed5` |
+| Full-page addon settings and navigation | Adapt internally: upstream page/API with owned unload closure, panel receiver/content shapes, search/title and detached-editor behavior. | `1c0f0ce6` |
+| Mounted-component refresh | Accept upstream helper/selectors; retain optional private scheduler and recovery-stack capabilities. | `9f020648` |
+| Native material clearing | Accept the constructor correction inside existing OS/API capability guards. | `bf103ca0` |
+| Second classname fix | Already covered; record `0169ecd2` ancestry while preserving scientific IDs and strict-prefix cases. | Source unchanged |
+| Release metadata and public types | Adapt to 1.14.6 and the public type graph; omit unverified blanket success claims. | `0b7b316e` |
+| Fork branding, diagnostics and documentation | User-directed Open BetterDiscord/OBD presentation, footer markup support and tracked artwork, preserving identities and policy. | `031ade9d`, `562ad63d` |
+
+The old Store DOM-observer/click shortcut is fully superseded by subscribed
+route requests and is retired. The modal UI is partly superseded by the new page;
+matching-unload/owner protection and the legacy modal helper remain required.
+The one-argument classname correction is covered by upstream's second matcher;
+its unrelated legacy cases remain required. Context, controlled-state, callback,
+provider-token and enabled-state safeguards are still required, not superseded.
+
+Updater/provider/plugin-manager implementations retain their protected source;
+the Updates panel changes only its product label, and token reporting changes
+only a human-readable label. Incoming commits contain no dependency, lockfile,
+injection/recovery or workflow changes. The separately requested CI branding
+changes only the displayed workflow and release names. No skipped or history-only
+row implies adoption of an unreviewed source hunk, and no later upstream head is
+imported.
+
+Focused checks, strict fresh declarations and independent review support these
+source dispositions. Full local validation, release verification and native
+acceptance retain their separate gates; this ancestry record does not establish
+a native pass or publication.
+
 ## 1.14.6 metadata and public declaration generation
 
 Release metadata reports `1.14.6`. The changelog describes the adopted settings
