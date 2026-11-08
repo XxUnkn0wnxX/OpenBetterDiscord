@@ -14,7 +14,7 @@ tokens](provider-tokens.md) for supported GitHub, GitLab, and git.slowb.ro
 plugin/theme requests, setup steps, and the **Access Tokens** controls.
 
 **On this page:** [Prerequisites](#prerequisites) · [Quick release](#quick-release) ·
-[Build](#build-betterdiscord-with-bun) · [Inject](#normal-bun-injection-methods) ·
+[Build](#build-open-betterdiscord-with-bun) · [Inject](#normal-bun-injection-methods) ·
 [macOS recovery](#macos-update-recovery) · [Install manager and OpenAsar](#macos-discord-install-manager-and-openasar-order) ·
 [Local wrappers](#local-zsh-wrappers) · [Quick examples](#quick-examples)
 
@@ -46,7 +46,7 @@ machine upgrade; keep local and Actions versions aligned. See the
 Fully restart Discord after injection. Replace `stable` with `ptb` or `canary`
 as needed. The wrapper closes the selected client before injection.
 
-## Build BetterDiscord With Bun
+## Build Open BetterDiscord With Bun
 
 These are the normal build commands used by this repo.
 
@@ -79,7 +79,7 @@ long option.
 
 `BETTERDISCORD_MACOS_RECOVERY_TIMEOUT_SECONDS` provides the same build-time
 setting for GitHub Actions. OpenAsar adds its own short coordination grace
-when it is waiting for BetterDiscord, so matching configured values are safe.
+when it is waiting for Open BetterDiscord, so matching configured values are safe.
 The fork's workflow builds explicitly use 45 seconds; direct builds without an
 override keep the normal 90-second default.
 
@@ -120,9 +120,9 @@ After any injection, fully restart the target Discord client.
 
 The current injector uses Discord's application wrapper layout. It renames the
 existing `Contents/Resources/app.asar` to `betterdiscord.app.asar`, then creates
-an owned `Contents/Resources/app/` loader that starts BetterDiscord before the
-renamed payload. If the existing payload is OpenAsar, it remains the payload
-behind BetterDiscord.
+an owned `Contents/Resources/app/` loader that starts Open BetterDiscord before
+the renamed payload. If the existing payload is OpenAsar, it remains the payload
+behind Open BetterDiscord.
 
 Bun is only used for development tooling: dependency installation, building,
 packing, and manually running the inject/uninject scripts. Installed update
@@ -141,7 +141,7 @@ the macOS-provided Zsh through `/usr/bin/env zsh -f` with a fixed system `PATH`;
 it does not load `.zshrc`, Oh My Zsh, custom shell paths, Bun, or a separately
 installed Node runtime.
 
-For each recovery run, BetterDiscord replaces these logs instead of appending
+For each recovery run, Open BetterDiscord replaces these logs instead of appending
 to older runs:
 
 - `betterdiscord-bootstrap/betterdiscord-bootstrap.log` — concise recovery and handoff events
@@ -154,18 +154,18 @@ PID file. Each run also has a unique recovery ID, so an older helper cannot
 overwrite current state or logs.
 
 The helper disables ShipIt's early relaunch, waits for the replacement
-`app.asar` to stabilize, rebuilds the BetterDiscord wrapper, and writes
-`wrapper-ready.json`. Recovery markers bind the BetterDiscord run ID, OpenAsar
+`app.asar` to stabilize, rebuilds the Open BetterDiscord wrapper, and writes
+`wrapper-ready.json`. Recovery markers bind the Open BetterDiscord run ID, OpenAsar
 handoff ID, and source Discord PID so an older quit cannot complete a newer
-handoff. If OpenAsar publishes its handoff just after BetterDiscord arms, the
+handoff. If OpenAsar publishes its handoff just after Open BetterDiscord arms, the
 helper may adopt it only when it names this same Discord process and recovery
 run.
 
-If a matching live OpenAsar handoff is detected, BetterDiscord lets OpenAsar
+If a matching live OpenAsar handoff is detected, Open BetterDiscord lets OpenAsar
 restore `betterdiscord.app.asar`. Either helper relaunches Discord only when
 the current updater explicitly requested a restart; an ordinary or fast user
 quit may repair a replaced ASAR but leaves Discord closed.
-If no Discord replacement appears, BetterDiscord publishes a matching
+If no Discord replacement appears, Open BetterDiscord publishes a matching
 `wrapper-result.json` no-update result so OpenAsar can end its wait without
 patching or relaunching the unchanged client.
 Deliberate uninject still disables this recovery before restoring the wrapped
@@ -176,17 +176,17 @@ payload.
 The [Discord install manager](https://github.com/XxUnkn0wnxX/Scripts/blob/develop/shell/discord_install_manager.zsh) described here is macOS-only.
 
 For a fresh install, run the manager first (optionally installing OpenAsar to
-top-level `app.asar`), then inject BetterDiscord so it wraps the payload as
+top-level `app.asar`), then inject Open BetterDiscord so it wraps the payload as
 `betterdiscord.app.asar`.
 
 The manager's `--BD` modifier is for in-place maintenance:
 
 | Invocation | Result |
 | --- | --- |
-| Without `--BD` | Removes a valid BetterDiscord wrapper. If OpenAsar is requested, installs it as top-level `app.asar`; inject BetterDiscord afterward. |
+| Without `--BD` | Removes a valid Open BetterDiscord wrapper. If OpenAsar is requested, installs it as top-level `app.asar`; inject Open BetterDiscord afterward. |
 | `--openasar --BD` or `--openasar-source <path> --BD` | Preserves a valid wrapper and replaces only its nested `betterdiscord.app.asar`; no reinjection is needed. |
-| `--BD` without a wrapper | Falls back to standalone `app.asar`; inject BetterDiscord afterward if both are wanted. |
-| `--update`, with or without OpenAsar | Creates the stock or standalone OpenAsar layout first; inject BetterDiscord last. |
+| `--BD` without a wrapper | Falls back to standalone `app.asar`; inject Open BetterDiscord afterward if both are wanted. |
+| `--update`, with or without OpenAsar | Creates the stock or standalone OpenAsar layout first; inject Open BetterDiscord last. |
 
 `--BD` requires `--openasar` or `--openasar-source` and cannot be combined
 with `--update`. The manager validates the complete wrapper ownership marker
@@ -285,7 +285,7 @@ Examples:
 
 ### `local-uninject.zsh`
 
-This wrapper removes BetterDiscord's owned `Contents/Resources/app/` loader and
+This wrapper removes Open BetterDiscord's owned `Contents/Resources/app/` loader and
 renames `betterdiscord.app.asar` back to `app.asar`. It does not inspect or
 replace the restored payload, so an OpenAsar payload remains OpenAsar.
 
@@ -302,9 +302,9 @@ Usage:
 | `release` or `dev` | Also verifies that the loader matches the selected injection style. |
 | Normal uninject | Checks the layout before acting. |
 | `--dry-run` | Validates and reports the layout without stopping Discord or changing files. |
-| BetterDiscord not installed | A normal uninject exits successfully without disabling recovery or stopping Discord. |
+| Open BetterDiscord not installed | A normal uninject exits successfully without disabling recovery or stopping Discord. |
 
-`auto` is usually the easiest choice when removing BetterDiscord's wrapper.
+`auto` is usually the easiest choice when removing Open BetterDiscord's wrapper.
 
 Examples:
 
@@ -320,20 +320,20 @@ Examples:
 
 For the recommended release and development paths, see [Quick release](#quick-release), [development injection](#development-injection), and [release injection](#release-injection) above.
 
-Reset/update Stable and install OpenAsar, then inject BetterDiscord last:
+Reset/update Stable and install OpenAsar, then inject Open BetterDiscord last:
 
 ```sh
 $HOME/Apps/Scripts/shell/discord_install_manager.zsh --channel stable --update --openasar
 ./local-inject.zsh stable
 ```
 
-Refresh OpenAsar inside an existing BetterDiscord wrapper without reinjecting:
+Refresh OpenAsar inside an existing Open BetterDiscord wrapper without reinjecting:
 
 ```sh
 $HOME/Apps/Scripts/shell/discord_install_manager.zsh --channel stable --openasar --BD
 ```
 
-Build only the BetterDiscord module and inject it into Canary in dev mode on macOS:
+Build only the Open BetterDiscord module and inject it into Canary in dev mode on macOS:
 
 ```sh
 ./local-build.zsh build --module=betterdiscord

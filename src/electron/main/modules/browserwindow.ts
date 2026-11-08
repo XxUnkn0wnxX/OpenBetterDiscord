@@ -31,8 +31,8 @@ class BrowserWindow extends electron.BrowserWindow {
             // Not i18n but the i18n system doesn't exist here
             electron.dialog.showMessageBox({
                 type: "warning",
-                title: "BetterDiscord Compatibility Warning",
-                message: "BetterDiscord has detected another client mod. This may cause issues with BetterDiscord and/or the other mod. Please remove any other client mods to ensure the best experience.",
+                title: "Open BetterDiscord Compatibility Warning",
+                message: "Open BetterDiscord has detected another client mod. This may cause issues with Open BetterDiscord and/or the other mod. Please remove any other client mods to ensure the best experience.",
                 checkboxLabel: "Don't show this again",
                 buttons: ["OK"],
                 defaultId: 0

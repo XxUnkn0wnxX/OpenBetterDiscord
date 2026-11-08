@@ -44,7 +44,7 @@ export default new class Core {
         this.trustBetterDiscordProtocol();
 
         // Load css early
-        Logger.log("Startup", "Injecting BD Styles");
+        Logger.log("Startup", "Injecting OBD Styles");
         DOMManager.injectStyle("bd-stylesheet", Styles.toString());
 
         Logger.log("Startup", "Initializing LocaleManager");
@@ -96,7 +96,7 @@ export default new class Core {
 
         const previousVersion = JsonStore.get("misc", "version");
         if (Config.get("version") !== previousVersion) {
-            Modals.showChangelogModal(Changelog);
+            Modals.showCoreChangelogModal(Changelog);
             JsonStore.set("misc", "version", Config.get("version"));
         }
 

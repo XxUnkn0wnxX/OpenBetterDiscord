@@ -433,9 +433,9 @@
     },
     "Updater": {
         "updateFailed": "Η ενημέρωση Απέτυχε!",
-        "updateFailedMessage": "Το BetterDiscord απέτυχε να ενημερωθεί. Λάβετε την τελευταία έκδοση του προγράμματος εγκατάστασης από την ιστοσελίδα μας (https:\/\/betterdiscord.app\/) και κάντε επανεγκατάσταση.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Η Ενημέρωση ήταν Επιτυχής!",
-        "updateAvailable": "Το BetterDiscord έχει μια νέα ενημερωση (v{{version}})",
+        "updateAvailable": "Το Open BetterDiscord έχει μια νέα ενημερωση (v{{version}})",
         "viewUpdates": "",
         "addonUpdaterNotificationTitle": "",
         "addonUpdatesAvailable": {

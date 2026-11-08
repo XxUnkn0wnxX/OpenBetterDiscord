@@ -115,7 +115,7 @@ const createBrowserWindow = (_: IpcMainInvokeEvent, url: string, {windowOptions,
 const inspectElement = (event: IpcMainEvent) => {
     void inspectDevToolsElement(event.sender).catch(error => {
         // eslint-disable-next-line no-console
-        console.error("BetterDiscord could not start element inspection", error);
+        console.error("Open BetterDiscord could not start element inspection", error);
     });
 };
 

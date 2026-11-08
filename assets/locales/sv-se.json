@@ -433,7 +433,7 @@
     },
     "Updater": {
         "updateFailed": "Uppdateringen misslyckades!",
-        "updateFailedMessage": "BetterDiscord kunde inte uppdateras. Ladda ned den senaste versionen av installationsprogrammet från vår webbplats (https:\/\/betterdiscord.app\/) och installera om BetterDiscord.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Uppdateringen lyckades!",
         "updateAvailable": "",
         "viewUpdates": "",

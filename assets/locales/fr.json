@@ -433,9 +433,9 @@
     },
     "Updater": {
         "updateFailed": "La mise à jour a échoué !",
-        "updateFailedMessage": "Échec de la mise à jour de BetterDiscord. Veuillez télécharger la version la plus récente de l'installeur sur notre site (https:\/\/betterdiscord.app\/) et réinstaller.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Mise à jour réussie !",
-        "updateAvailable": "Mise à jour de BetterDiscord disponible (v{{version}})",
+        "updateAvailable": "Mise à jour de Open BetterDiscord disponible (v{{version}})",
         "viewUpdates": "Voir les mises à jour",
         "addonUpdaterNotificationTitle": "Mises à jour des extensions",
         "addonUpdatesAvailable": {

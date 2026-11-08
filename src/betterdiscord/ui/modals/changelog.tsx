@@ -43,7 +43,7 @@ const toggleAllowingOtherClientMods = async (click: MouseEvent) => {
     }
 };
 
-const supportLink = <a className={`${AnchorClasses.anchor} ${AnchorClasses.anchorUnderlineOnHover}`} onClick={joinSupportServer}>Join our Discord Server.</a>;
+const supportLink = <a className={`${AnchorClasses.anchor} ${AnchorClasses.anchorUnderlineOnHover}`} onClick={joinSupportServer}>Join the upstream BetterDiscord Discord server.</a>;
 const defaultFooter = <Text><span onClick={toggleAllowingOtherClientMods}>Need support?</span> {supportLink}</Text>;
 
 const twitter = <DiscordModules.Tooltip color="primary" position="top" text={t("Socials.twitter")}>
@@ -103,7 +103,7 @@ export interface ChangelogProps {
     changes?: ChangelogEntry[];
 }
 
-export default function ChangelogModal({transitionState, footer, title, subtitle, onClose, video, poster, banner, blurb, changes}: ChangelogProps) {
+export default function ChangelogModal({transitionState, footer, title, subtitle, onClose, video, poster, banner, blurb, changes, coreFooter}: ChangelogProps & {coreFooter?: boolean;}) {
 
     const ChangelogHeader = useMemo(() => <Header justify={Flex.Justify.BETWEEN}>
         <Flex direction={Flex.Direction.VERTICAL}>
@@ -145,6 +145,6 @@ export default function ChangelogModal({transitionState, footer, title, subtitle
     return <Root className="bd-changelog-modal" transitionState={transitionState} size={Root.Sizes.MEDIUM} style={Root.Styles.STANDARD}>
         {ChangelogHeader}
         <Content>{changelogItems}</Content>
-        {(footer || title === "BetterDiscord") && ChangelogFooter}
+        {(footer || coreFooter || title === "BetterDiscord") && ChangelogFooter}
     </Root>;
 }

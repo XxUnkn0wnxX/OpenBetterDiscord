@@ -1,9 +1,9 @@
-# BetterDiscord macOS fork
+# Open BetterDiscord macOS fork
 
 [![CI Status][ci-badge]][ci-link] [![License][license-badge]][license-link] [![Website][website-badge]][website-link] [![Docs][docs-badge]][docs-link] [![Discord][discord-badge]][discord-link] [![Translate][translate-badge]][translate-link]
 
-[ci-badge]: https://img.shields.io/github/actions/workflow/status/XxUnkn0wnxX/BetterDiscord/ci.yml?branch=develop&logo=github&label=develop&style=for-the-badge
-[ci-link]: https://github.com/XxUnkn0wnxX/BetterDiscord/actions/workflows/ci.yml
+[ci-badge]: https://img.shields.io/github/actions/workflow/status/XxUnkn0wnxX/OpenBetterDiscord/ci.yml?branch=develop&logo=github&label=develop&style=for-the-badge
+[ci-link]: https://github.com/XxUnkn0wnxX/OpenBetterDiscord/actions/workflows/ci.yml
 [license-badge]: https://img.shields.io/badge/license-Apache--2.0-3a71c1?style=for-the-badge
 [license-link]: LICENSE.md
 [website-badge]: https://img.shields.io/badge/upstream-website-3a71c1?logo=firefoxbrowser&style=for-the-badge
@@ -15,11 +15,11 @@
 [translate-badge]: https://img.shields.io/badge/upstream-translate-3a71c1?logo=crowdin&style=for-the-badge
 [translate-link]: https://translate.betterdiscord.app
 
-An independent [BetterDiscord](https://github.com/BetterDiscord/BetterDiscord)
-backport targeting older Discord clients on **macOS Big Sur 11.7.1** and pinned
-Discord/Electron builds. Build locally
-from `develop`, inject into a standard macOS Discord installation, then open
-Discord normally.
+Open BetterDiscord is an independent backport of
+[BetterDiscord](https://github.com/BetterDiscord/BetterDiscord), targeting older
+Discord clients on **macOS Big Sur 11.7.1** and pinned Discord/Electron builds.
+Build locally from `develop`, inject into a standard macOS Discord installation,
+then open Discord normally.
 
 The Website, Docs, Discord and Translate badges link to upstream community
 resources. This fork uses the local build workflow below, not upstream installer
@@ -32,13 +32,14 @@ downloads.
 
 | Area | Fork behavior |
 | --- | --- |
-| macOS workflow | Local wrappers build, inject and remove BetterDiscord on Stable, PTB or Canary. Update recovery preserves the application payload and coordinates with OpenAsar. |
+| macOS workflow | Local wrappers build, inject and remove Open BetterDiscord on Stable, PTB or Canary. Update recovery preserves the application payload and coordinates with OpenAsar. |
 | [Addon updates](docs/addon-updater.md) | Selects eligible declared URLs and Store entries by addon identity and version; equal versions prefer the declared URL. |
 | [Access tokens](docs/provider-tokens.md) | Optional GitHub, GitLab.com and git.slowb.ro authentication for eligible managed addon updates, with validated settings and masked diagnostics. |
-| Update policy | BetterDiscord core checks remain dormant. Plugin and theme updates and the Addon Store remain available. |
+| Update policy | Open BetterDiscord core checks remain dormant. Plugin and theme updates and the Addon Store remain available. |
 | Plugin loading | Disabled plugins and libraries remain disabled; libraries receive no loading bypass. |
 | Recovery reports | Drafts supported GitHub, GitLab.com and git.slowb.ro reports with Client Info; Manual report copies details when no supported source is available. |
-| Keyboard focus | A scoped visible indicator improves keyboard-focus feedback in BetterDiscord controls without changing focus order. |
+| Keyboard focus | A scoped visible indicator improves keyboard-focus feedback in Open BetterDiscord controls without changing focus order. |
+| Release provenance | The rolling `develop-latest` release includes the ASAR and eight-input checksums, with branch/commit build metadata. |
 
 </details>
 
@@ -89,8 +90,8 @@ Prerequisites:
 Clone the fork's `develop` branch and install its dependencies:
 
 ```sh
-git clone --branch develop https://github.com/XxUnkn0wnxX/BetterDiscord.git
-cd BetterDiscord
+git clone --branch develop https://github.com/XxUnkn0wnxX/OpenBetterDiscord.git
+cd OpenBetterDiscord
 bun install
 ```
 
@@ -117,7 +118,7 @@ at the unpacked `dist/` output and is intended only for local iteration.
 
 ## :wastebasket: Remove the fork
 
-Restore the payload that existed before BetterDiscord wrapped it:
+Restore the payload that existed before Open BetterDiscord wrapped it:
 
 ```sh
 zsh local-uninject.zsh stable auto
@@ -140,7 +141,8 @@ This preserves a nested OpenAsar payload when one was already installed.
 
 ## :link: Upstream and license
 
-BetterDiscord is the upstream project. This fork preserves upstream authorship
-and remains available under the [Apache License 2.0](LICENSE.md). Fork-specific
-support and changes should be handled in this repository rather than through
-the upstream installer support flow.
+BetterDiscord is the upstream project. Open BetterDiscord preserves its
+upstream authorship and remains available under the
+[Apache License 2.0](LICENSE.md). Fork-specific support and changes should be
+handled in this repository rather than through the upstream installer support
+flow.

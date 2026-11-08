@@ -1,6 +1,6 @@
-# Contributing to this fork
+# Contributing to Open BetterDiscord
 
-Thanks for helping improve this macOS-focused BetterDiscord fork.
+Thanks for helping improve Open BetterDiscord.
 
 This guide covers macOS development, including Big Sur and pinned older
 Discord releases. Use the local Zsh wrappers for building and injection.
@@ -14,9 +14,9 @@ fork-sensitive area, also read:
 - [Fork-specific changes and upstream policy](docs/fork-specific-changes.md)
 
 Changes intended only for the upstream BetterDiscord project should be proposed
-upstream. Fork behavior, macOS wrapper/recovery work, and bugs reproduced in
-this repository belong in this fork's
-[issue tracker](https://github.com/XxUnkn0wnxX/BetterDiscord/issues).
+upstream. Open BetterDiscord behavior, macOS wrapper/recovery work, and bugs
+reproduced in this repository belong in the
+[issue tracker](https://github.com/XxUnkn0wnxX/OpenBetterDiscord/issues).
 
 ## Branch and pull requests
 
@@ -36,12 +36,12 @@ fork-only API.
 Clone the fork and install dependencies with Bun:
 
 ```sh
-git clone --branch develop https://github.com/XxUnkn0wnxX/BetterDiscord.git
-cd BetterDiscord
+git clone --branch develop https://github.com/XxUnkn0wnxX/OpenBetterDiscord.git
+cd OpenBetterDiscord
 bun install
 ```
 
-BetterDiscord is a single TypeScript project built and tested with Bun. Its
+Open BetterDiscord is a single TypeScript project built and tested with Bun. Its
 code is split by where it runs inside Discord:
 
 | Area | Contents |
@@ -107,15 +107,15 @@ or Canary only when the change could differ by Discord channel.
 Changes in these areas need an explicit compatibility review:
 
 - application-ASAR injection, safe uninject, macOS recovery, and the
-  BetterDiscord/OpenAsar handoff;
+  Open BetterDiscord/OpenAsar handoff;
 - Settings placement, navigation, version/debug-copy behavior, and Custom CSS;
 - plugin loading, which must not special-case `0BDFDB.plugin.js` or another
   plugin library;
 - plugin/theme updates, source identity validation, and atomic replacement;
 - upstream plugin APIs and Webpack helpers on older macOS and pinned older
   Discord/Electron builds;
-- BetterDiscord core updates, whose startup, scheduled, and manual entry points
-  remain disabled;
+- Open BetterDiscord core updates, whose startup, scheduled, and manual entry
+  points remain disabled;
 - fork workflows, wrappers, documentation, badges, and `develop` assumptions.
 
 If an upstream change overlaps one of these areas, preserve the fork behavior
@@ -144,10 +144,10 @@ Before opening a fork issue:
 Include:
 
 - macOS and Discord channel/version;
-- the embedded BetterDiscord branch/commit;
+- the embedded Open BetterDiscord branch/commit;
 - exact reproduction steps and expected behavior;
 - whether OpenAsar is installed;
-- relevant screenshots and the newest scoped BetterDiscord debug log;
+- relevant screenshots and the newest scoped Open BetterDiscord debug log;
 - the plugins/themes needed to reproduce the issue.
 
 Do not send fork-only injector, updater, or OpenAsar integration problems to the

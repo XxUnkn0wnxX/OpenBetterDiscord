@@ -127,7 +127,7 @@
                 },
                 "checkForUpdates": {
                     "name": "Автоматична перевірка наявності оновлень",
-                    "note": "Періодично перевіряє наявність оновлень для ваших доповнень та основної версії BD"
+                    "note": "Періодично перевіряє наявність оновлень для ваших доповнень та основної версії OBD"
                 },
                 "updateInterval": {
                     "name": "Інтервал перевірки оновлень",
@@ -447,9 +447,9 @@
     },
     "Updater": {
         "updateFailed": "Оновлення не вдалося!",
-        "updateFailedMessage": "Оновлення BetterDiscord не вдалося. Будь ласка, завантажте останню версію інсталятора з нашого веб-сайту (https:\/\/betterdiscord.app\/) і переінсталюйте програму.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Оновлення успішне!",
-        "updateAvailable": "Для BetterDiscord вийшло нове оновлення (v{{version}})",
+        "updateAvailable": "Для Open BetterDiscord вийшло нове оновлення (v{{version}})",
         "viewUpdates": "Переглянути оновлення",
         "addonUpdaterNotificationTitle": "Оновлення доповнень",
         "addonUpdatesAvailable": {

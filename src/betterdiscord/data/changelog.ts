@@ -3,12 +3,12 @@ import type {ChangelogProps} from "@ui/modals/changelog";
 
 // fixed, improved, added, progress
 export default {
-    title: "BetterDiscord",
+    title: "Open BetterDiscord",
     subtitle: `v${config.get("version")}`,
     // https://youtu.be/BZq1eb9d0HI?si=67V2eArlF4atnGnz
     video: "https://www.youtube.com/embed/Qv1HUqqUgkg?si=67V2eArlF4atnGnz&vq=hd720p&hd=1&rel=0&showinfo=0&mute=0&loop=1&autohide=1",
     // banner: "https://i.imgur.com/wuh5yMK.png",
-    blurb: "BetterDiscord 1.14.5 with Rspack compatibility and this fork's older-runtime safeguards.",
+    blurb: "Open BetterDiscord 1.14.5 with Rspack compatibility and this fork's older-runtime safeguards.",
     changes: [
         {
             type: "fixed",

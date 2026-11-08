@@ -122,7 +122,7 @@ function rollback_prepared_recovery() {
 
     if (( status != 0 )) && [[ "$prepared_recovery" == true && -f "$wrapper_marker" && -f "$wrapped_asar" ]]; then
         rm -f -- "$recovery_disabled" || true
-        echo "Re-enabled BetterDiscord update recovery because uninject did not complete."
+        echo "Re-enabled Open BetterDiscord update recovery because uninject did not complete."
     fi
 
     return "$status"

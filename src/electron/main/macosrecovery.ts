@@ -135,9 +135,9 @@ rollback_uncommitted_wrapper() {
             fi
         fi
         if [[ ! -e "$app_directory" ]] && /bin/mv "$nested_target" "$app_asar" 2>/dev/null; then
-            log "Rolled back the incomplete BetterDiscord wrapper to app.asar"
+            log "Rolled back the incomplete Open BetterDiscord wrapper to app.asar"
         elif [[ ! -e "$app_asar" ]]; then
-            log "Could not roll back the incomplete BetterDiscord wrapper to app.asar"
+            log "Could not roll back the incomplete Open BetterDiscord wrapper to app.asar"
             return 1
         fi
     fi
@@ -147,7 +147,7 @@ cleanup_run_state() {
     if owns_active_run; then
         /bin/rm -f "$state_path" "$active_run_path" 2>/dev/null || true
     else
-        log "A newer BetterDiscord recovery run replaced active state before cleanup"
+        log "A newer Open BetterDiscord recovery run replaced active state before cleanup"
     fi
     cleanup_own_run
 }
@@ -317,7 +317,7 @@ matching_openasar_pending() {
     (( pending_epoch >= recovery_epoch )) || return 1
     openasar_handoff_id="$pending_handoff_id"
     openasar_source_process_pid="$pending_source_process_pid"
-    log "Adopted same-process OpenAsar handoff published after BetterDiscord recovery arm handoffId=$openasar_handoff_id runId=$run_id"
+    log "Adopted same-process OpenAsar handoff published after Open BetterDiscord recovery arm handoffId=$openasar_handoff_id runId=$run_id"
     return 0
 }
 
@@ -415,7 +415,7 @@ betterdiscord_owns_relaunch() {
         return 1
     fi
     if ! owns_active_run; then
-        log "A newer BetterDiscord recovery run owns Discord relaunch"
+        log "A newer Open BetterDiscord recovery run owns Discord relaunch"
         return 1
     fi
     if [[ -e "$disabled_path" ]]; then
@@ -434,7 +434,7 @@ relaunch_discord() {
     local open_output=""
     local executable_path=""
 
-    log "No matching OpenAsar handoff; BetterDiscord owns relaunch"
+    log "No matching OpenAsar handoff; Open BetterDiscord owns relaunch"
     if [[ ! -d "$target_app_path" ]]; then
         log "Discord app is not available for relaunch at $target_app_path"
         return 0
@@ -470,7 +470,7 @@ relaunch_discord() {
 
 handoff_or_relaunch_after_failure() {
     if matching_openasar_pending; then
-        log "Matching OpenAsar handoff remains active after BetterDiscord recovery failure"
+        log "Matching OpenAsar handoff remains active after Open BetterDiscord recovery failure"
     elif (( shipit_launch_suppressed == 1 )) && [[ "$restart_requested" = "1" ]]; then
         relaunch_discord
     else
@@ -515,7 +515,7 @@ while (( SECONDS < deadline )); do
 done
 
 if (( stable_polls < 3 )); then
-    log "No Discord update detected before timeout; leaving the existing BetterDiscord wrapper unchanged"
+    log "No Discord update detected before timeout; leaving the existing Open BetterDiscord wrapper unchanged"
     if matching_openasar_pending && ! publish_no_update_result; then
         log "Could not publish no-update result for the matching OpenAsar handoff"
     fi
@@ -554,7 +554,7 @@ if ! /bin/mkdir "$staged_wrapper" \
     || ! /bin/cp "$snapshot_path/package.json" "$staged_wrapper/package.json" \
     || ! /bin/cp "$snapshot_path/.betterdiscord-inject.json" "$staged_wrapper/.betterdiscord-inject.json" \
     || ! /bin/mv "$staged_wrapper" "$app_directory"; then
-    fail_recovery "could not install the BetterDiscord wrapper"
+    fail_recovery "could not install the Open BetterDiscord wrapper"
 fi
 staged_wrapper=""
 

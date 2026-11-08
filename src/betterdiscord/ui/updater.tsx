@@ -49,7 +49,7 @@ function makeButton(tooltip: string, children: ReactNode, action: () => Promise<
 }
 
 function CoreUpdaterPanel({hasUpdate, remoteVersion, update}: {hasUpdate: boolean; remoteVersion: string; update: () => Promise<void>;}) {
-    return <Drawer name="BetterDiscord" collapsible={true}>
+    return <Drawer name="Open BetterDiscord" collapsible={true}>
         <SettingItem name={`Core v${Config.get("version")}`} note={hasUpdate ? t("Updater.versionAvailable", {version: remoteVersion}) : t("Updater.noUpdatesAvailable")} inline={true} id={"core-updater"}>
             {!hasUpdate && <div className="bd-filled-checkmark"><CheckIcon size="18px" /></div>}
             {hasUpdate && makeButton(t("Updater.updateButton"), <ArrowDownToLineIcon />, update, {className: "no-animation"})}

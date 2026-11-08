@@ -31,7 +31,7 @@
                     "note": "选择通知弹窗的位置。"
                 },
                 "notificationEnabled": {
-                    "name": "显示 BetterDiscord 通知",
+                    "name": "显示 Open BetterDiscord 通知",
                     "note": "阻止或允许在屏幕上显示通知。"
                 }
             },
@@ -127,7 +127,7 @@
                 },
                 "checkForUpdates": {
                     "name": "自动检查更新",
-                    "note": "定期检查插件和 BetterDiscord 核心程序的更新"
+                    "note": "定期检查插件和 Open BetterDiscord 核心程序的更新"
                 },
                 "updateInterval": {
                     "name": "更新检查间隔时间",
@@ -426,9 +426,9 @@
     },
     "Updater": {
         "updateFailed": "更新失败！",
-        "updateFailedMessage": "BetterDiscord 更新失败。请在官网（https:\/\/betterdiscord.app\/）重新下载和安装最新版本。",
+        "updateFailedMessage": "",
         "updateSuccessful": "更新成功！",
-        "updateAvailable": "检测到 BetterDiscord 新版本（v{{version}}）",
+        "updateAvailable": "检测到 Open BetterDiscord 新版本（v{{version}}）",
         "viewUpdates": "查看更新详情",
         "addonUpdaterNotificationTitle": "插件更新器",
         "addonUpdatesAvailable": {

@@ -1,12 +1,12 @@
 # Plugin and theme updates
 
-BetterDiscord checks an addon's `@updateUrl` and eligible Addon Store entry for
-newer versions. **Checks never install automatically:** choose **Update** or
-**Update All** to install.
+Open BetterDiscord checks an addon's `@updateUrl` and eligible Addon Store entry
+for newer versions. **Checks never install automatically:** choose **Update**
+or **Update All** to install.
 
 ## Settings
 
-Open **User Settings → BetterDiscord → Settings → Addon Manager**.
+Open **User Settings → Open BetterDiscord → Settings → Addon Manager**.
 
 | Setting | Default | Controls |
 | --- | --- | --- |
@@ -14,9 +14,9 @@ Open **User Settings → BetterDiscord → Settings → Addon Manager**.
 | Update Check Interval | 4 hours | Per-addon freshness, adjustable from 2–12 hours. |
 | Show Addon Update Notifications | On | Success toasts and persistent failure cards. |
 
-- **Manual check:** open **BetterDiscord → Updates → Check For Updates**. It requests a fresh pass, subject to provider backoff; repeated clicks share work or observe a 60-second cooldown.
+- **Manual check:** open **Open BetterDiscord → Updates → Check For Updates**. It requests a fresh pass, subject to provider backoff; repeated clicks share work or observe a 60-second cooldown.
 - **Enabled and disabled addons:** both receive checks; updates preserve their existing state.
-- **Core updates:** BetterDiscord's own updater stays disabled at startup, on the scheduler and from the manual button.
+- **Core updates:** Open BetterDiscord's own updater stays disabled at startup, on the scheduler and from the manual button.
 
 ## Which source wins?
 
@@ -46,8 +46,8 @@ Start the file with its JSDoc metadata, including the download source:
  */
 ```
 
-BetterDiscord reads this file to find its version. **`@source` supplies identity
-and project information; it is not a download fallback.**
+Open BetterDiscord reads this file to find its version. **`@source` supplies
+identity and project information; it is not a download fallback.**
 
 | Supported source | Accepted forms |
 | --- | --- |
@@ -100,8 +100,8 @@ separate from the success/failure notification setting.
 ## Optional authentication
 
 [GitHub, GitLab.com and git.slowb.ro tokens](provider-tokens.md) can authorize
-eligible requests made by BetterDiscord's managed plugin/theme updater. Saved
-tokens are restricted to supported provider routes and their validation. Public
+eligible requests made by Open BetterDiscord's managed plugin/theme updater.
+Saved tokens are restricted to supported provider routes and their validation. Public
 `BdApi.Net.fetch` calls do not inherit them. Independent plugin self-updaters
 handle their own credentials, checking and installation logic.
 

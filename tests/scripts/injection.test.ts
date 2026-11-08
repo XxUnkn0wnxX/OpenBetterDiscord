@@ -73,6 +73,6 @@ describe("app wrapper injection", () => {
 
         fs.rmSync(path.join(resources, "app.asar"));
         fs.writeFileSync(path.join(resources, "betterdiscord.app.asar"), "payload");
-        expect(() => unwrapInjection(resources)).toThrow("wrapped payload exists without BetterDiscord metadata");
+        expect(() => unwrapInjection(resources)).toThrow("wrapped payload exists without Open BetterDiscord metadata");
     });
 });

@@ -1,10 +1,9 @@
 # @betterdiscord/types
 
-TypeScript type definitions for the
-[BetterDiscord fork](https://github.com/XxUnkn0wnxX/BetterDiscord) plugin API
-(`BdApi`).
+TypeScript type definitions for the Open BetterDiscord fork's plugin API
+(`BdApi`): [repository](https://github.com/XxUnkn0wnxX/OpenBetterDiscord).
 
-Generated from BetterDiscord source, these types describe the global `BdApi`
+Generated from Open BetterDiscord source, these types describe the global `BdApi`
 object, the `window.BdApi` augmentation, and the `BetterDiscord` namespace.
 
 ## Installation
@@ -43,9 +42,9 @@ const { Webpack, Patcher } = new BdApi("MyPlugin");
 
 ## Versioning
 
-This package is versioned independently from BetterDiscord. Type changes follow
-semver for the API shape, not the BetterDiscord release version.
+This package is versioned independently from Open BetterDiscord. Type changes
+follow semver for the API shape, not the Open BetterDiscord release version.
 
 ## License
 
-[Apache-2.0](https://github.com/XxUnkn0wnxX/BetterDiscord/blob/develop/LICENSE.md)
+[Apache-2.0](https://github.com/XxUnkn0wnxX/OpenBetterDiscord/blob/develop/LICENSE.md)

@@ -83,11 +83,11 @@ function validateOwnedWrapper(appDirectory: string, marker: InjectionMarker): st
     let entries: string[];
     try {entries = fs.readdirSync(appDirectory).sort();}
     catch {return "cannot read Resources/app";}
-    if (entries.join("\0") !== expectedEntries.sort().join("\0")) return "Resources/app contains files not owned by BetterDiscord";
+    if (entries.join("\0") !== expectedEntries.sort().join("\0")) return "Resources/app contains files not owned by Open BetterDiscord";
 
     const indexPath = path.join(appDirectory, "index.js");
     const index = isFile(indexPath) ? fs.readFileSync(indexPath, "utf8") : "";
-    if (!index.includes(loaderMarker) || !index.includes(marker.payload)) return "Resources/app/index.js does not match BetterDiscord metadata";
+    if (!index.includes(loaderMarker) || !index.includes(marker.payload)) return "Resources/app/index.js does not match Open BetterDiscord metadata";
 
     const pkg = readJson(path.join(appDirectory, "package.json"));
     const main = pkg && typeof pkg === "object" ? (pkg as {main?: unknown}).main : null;
@@ -111,13 +111,13 @@ export function inspectInjection(resources: string): InjectionLayout {
     if (wrappedAsarExists && wrappedDirectoryExists) return {kind: "unsafe", reason: "both wrapped payload forms exist"};
 
     if (markerExists) {
-        if (!appDirectoryExists || topAsarExists) return {kind: "unsafe", reason: "BetterDiscord marker exists in a partial or dual layout"};
+        if (!appDirectoryExists || topAsarExists) return {kind: "unsafe", reason: "Open BetterDiscord marker exists in a partial or dual layout"};
         const marker = readJson(markerPath);
-        if (!isInjectionMarker(marker)) return {kind: "unsafe", reason: "BetterDiscord marker is invalid"};
+        if (!isInjectionMarker(marker)) return {kind: "unsafe", reason: "Open BetterDiscord marker is invalid"};
         const expectedSource = path.resolve(appDirectory, marker.payload);
         const expectedIsDirectory = marker.payload.endsWith("betterdiscord.app");
         if (expectedIsDirectory ? !isDirectory(expectedSource) : !isFile(expectedSource)) {
-            return {kind: "unsafe", reason: "BetterDiscord wrapped payload is missing or has the wrong type"};
+            return {kind: "unsafe", reason: "Open BetterDiscord wrapped payload is missing or has the wrong type"};
         }
         if ((expectedIsDirectory && wrappedAsarExists) || (!expectedIsDirectory && wrappedDirectoryExists)) {
             return {kind: "unsafe", reason: "unexpected second wrapped payload exists"};
@@ -127,7 +127,7 @@ export function inspectInjection(resources: string): InjectionLayout {
         return {kind: "wrapped", marker, source: expectedSource, payload: marker.payload};
     }
 
-    if (wrappedAsarExists || wrappedDirectoryExists) return {kind: "unsafe", reason: "wrapped payload exists without BetterDiscord metadata"};
+    if (wrappedAsarExists || wrappedDirectoryExists) return {kind: "unsafe", reason: "wrapped payload exists without Open BetterDiscord metadata"};
     if (topAsarExists && appDirectoryExists) return {kind: "unsafe", reason: "both Resources/app.asar and Resources/app exist"};
     if (topAsarExists) return {kind: "plain-asar", source: appAsar, payload: "../betterdiscord.app.asar"};
     if (appDirectoryExists) {
@@ -178,7 +178,7 @@ export function wrapInjection(options: InjectionOptions): InjectionMarker {
     const previousWrapper = path.join(options.resources, `.betterdiscord-app-previous-${suffix}`);
 
     if (layout.kind === "wrapped") {
-        log(`Updating BetterDiscord wrapper (${marker.installationId})`);
+        log(`Updating Open BetterDiscord wrapper (${marker.installationId})`);
         if (options.dryRun) return marker;
         try {
             writeWrapper(stagedWrapper, marker);
@@ -196,7 +196,7 @@ export function wrapInjection(options: InjectionOptions): InjectionMarker {
 
     log(`Renaming ${path.basename(layout.source)} to ${path.basename(wrappedTarget)}`);
     if (options.dryRun) {
-        log("Creating BetterDiscord Resources/app wrapper");
+        log("Creating Open BetterDiscord Resources/app wrapper");
         return marker;
     }
 
@@ -225,7 +225,7 @@ export function unwrapInjection(resources: string, dryRun = false, log: (message
     const suffix = `${process.pid}-${Date.now()}`;
     const stagedWrapper = path.join(resources, `.betterdiscord-app-remove-${suffix}`);
 
-    log(`Removing BetterDiscord Resources/app wrapper`);
+    log(`Removing Open BetterDiscord Resources/app wrapper`);
     log(`Restoring ${path.basename(layout.source)} to ${path.basename(restoredTarget)}`);
     if (dryRun) return layout.marker;
 

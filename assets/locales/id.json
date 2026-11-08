@@ -127,7 +127,7 @@
                 },
                 "checkForUpdates": {
                     "name": "Otomatis Cek Pembaruan",
-                    "note": "Periode cek untuk pembaruan ke addon anda dan inti BD"
+                    "note": "Periode cek untuk pembaruan ke addon anda dan inti OBD"
                 },
                 "updateInterval": {
                     "name": "Interval Cek Pembaruan",
@@ -426,9 +426,9 @@
     },
     "Updater": {
         "updateFailed": "Pembaruan Gagal!",
-        "updateFailedMessage": "BetterDiscord gagal untuk diperbarui. Dimohon unduh installer versi terkini dari situs web kami (https:\/\/betterdiscord.app\/) dan instal ulang.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Sukses Pembaruan!",
-        "updateAvailable": "BetterDiscord memiliki pembaruan baru (v{{version}})",
+        "updateAvailable": "Open BetterDiscord memiliki pembaruan baru (v{{version}})",
         "viewUpdates": "Lihat Pembaruan",
         "addonUpdaterNotificationTitle": "Pembaruan Addon",
         "addonUpdatesAvailable": {

@@ -435,7 +435,7 @@
         "updateFailed": "Güncelleme başarısız!",
         "updateFailedMessage": "",
         "updateSuccessful": "Güncelleme Başarılı!",
-        "updateAvailable": "BetterDiscord'un s{{version}} güncellemesi yayınlandı",
+        "updateAvailable": "Open BetterDiscord'un s{{version}} güncellemesi yayınlandı",
         "viewUpdates": "Güncellemeleri Gör",
         "addonUpdaterNotificationTitle": "",
         "addonUpdatesAvailable": {

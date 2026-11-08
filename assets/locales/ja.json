@@ -426,9 +426,9 @@
     },
     "Updater": {
         "updateFailed": "アップデートに失敗しました！",
-        "updateFailedMessage": "BetterDiscordのアップデートに失敗しました。ホームページ(https:\/\/betterdiscord.app\/)から最新版のインストーラーをダウンロードして、再インストールしてください。",
+        "updateFailedMessage": "",
         "updateSuccessful": "アップデートに成功しました！",
-        "updateAvailable": "BetterDiscordに新しいアップデート(v{{version}})があります。",
+        "updateAvailable": "Open BetterDiscordに新しいアップデート(v{{version}})があります。",
         "viewUpdates": "",
         "addonUpdaterNotificationTitle": "",
         "addonUpdatesAvailable": {

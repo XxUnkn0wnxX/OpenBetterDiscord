@@ -45,7 +45,7 @@ describe("debug information", () => {
 
         try {
             expect(getDebugInfo()).toBe(
-                "## Discord Info\nStable 2042 (1234567)\nHost 1.2.3 arm64 (47)\nmacOS 14.4 (14.4.1)\n\n## BetterDiscord\nStable 1.14.3 (abcdef1)\n\n### 2 Plugins (1 Enabled):\n- Example Plugin (1.2.3) (Enabled)\n- Disabled Plugin (4.5.6)\n\n### 1 Themes (0 Enabled):\n- Example Theme (7.8.9)\n"
+                "## Discord Info\nStable 2042 (1234567)\nHost 1.2.3 arm64 (47)\nmacOS 14.4 (14.4.1)\n\n## Open BetterDiscord\nStable 1.14.3 (abcdef1)\n\n### 2 Plugins (1 Enabled):\n- Example Plugin (1.2.3) (Enabled)\n- Disabled Plugin (4.5.6)\n\n### 1 Themes (0 Enabled):\n- Example Theme (7.8.9)\n"
             );
         }
         finally {
@@ -73,7 +73,7 @@ describe("debug information", () => {
             expect(output).not.toContain("<details open");
             expect(output).toContain("<summary>Client Info</summary>");
             expect(output).toContain("## Discord Info\n\nStable 2042 (1234567)\nHost 1.2.3 arm64 (47)\nmacOS 14.4 (14.4.1)");
-            expect(output).toContain("## BetterDiscord\n\nStable 1.14.3 (abcdef1)");
+            expect(output).toContain("## Open BetterDiscord\n\nStable 1.14.3 (abcdef1)");
             expect(output).not.toContain("Plugins");
             expect(output).not.toContain("Themes");
             expect(output).not.toContain("Example Plugin");

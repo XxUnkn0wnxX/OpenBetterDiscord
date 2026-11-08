@@ -30,7 +30,7 @@
         "retry": "Retry",
         "dismiss": "Dismiss",
         "clearedTitle": "Access token cleared",
-        "cleared": "Your {{provider}} access token was cleared because {{provider}} confirmed it is no longer valid. Add a new token in BetterDiscord Settings → Access Tokens.",
+        "cleared": "Your {{provider}} access token was cleared because {{provider}} confirmed it is no longer valid. Add a new token in Open BetterDiscord Settings → Access Tokens.",
         "permissionsTitle": "Token permissions required",
         "permissions": {
             "gitlab": "The attempted GitLab token was not saved because it lacks {{permission}} access. Create a new legacy token with read_api, or a fine-grained token with User → Read and the read permissions for your addon projects. Rotating a token keeps its existing permissions.",
@@ -181,15 +181,15 @@
                 "name": "Access Tokens",
                 "github": {
                     "name": "GitHub Token",
-                    "note": "Optional fine-grained or classic token for GitHub addon updates. Public repository read access is enough. Saved in plaintext in BetterDiscord settings. A replacement takes effect only after validation; the current token remains active while checking."
+                    "note": "Optional fine-grained or classic token for GitHub addon updates. Public repository read access is enough. Saved in plaintext in Open BetterDiscord settings. A replacement takes effect only after validation; the current token remains active while checking."
                 },
                 "gitlab": {
                     "name": "GitLab Token",
-                    "note": "Optional legacy token with read_api, or fine-grained token with User → Read and the read permissions for your addon projects. Saved in plaintext in BetterDiscord settings. A replacement takes effect only after validation; the current token remains active while checking."
+                    "note": "Optional legacy token with read_api, or fine-grained token with User → Read and the read permissions for your addon projects. Saved in plaintext in Open BetterDiscord settings. A replacement takes effect only after validation; the current token remains active while checking."
                 },
                 "slowbro": {
                     "name": "git.slowb.ro Token",
-                    "note": "Optional Forgejo token for git.slowb.ro addon updates. Use Public only access with read:user and read:repository. Saved in plaintext in BetterDiscord settings. A replacement takes effect only after validation; the current token remains active while checking."
+                    "note": "Optional Forgejo token for git.slowb.ro addon updates. Use Public only access with read:user and read:repository. Saved in plaintext in Open BetterDiscord settings. A replacement takes effect only after validation; the current token remains active while checking."
                 }
             },
             "customcss": {
@@ -494,9 +494,9 @@
     },
     "Updater": {
         "updateFailed": "Update Failed!",
-        "updateFailedMessage": "BetterDiscord failed to update. Please download the latest version of the installer from our website (https://betterdiscord.app/) and reinstall.",
+        "updateFailedMessage": "Open BetterDiscord failed to update. Check the fork releases and manual installation guide at https://github.com/XxUnkn0wnxX/OpenBetterDiscord.",
         "updateSuccessful": "Update Successful!",
-        "updateAvailable": "BetterDiscord has a new update (v{{version}})",
+        "updateAvailable": "Open BetterDiscord has a new update (v{{version}})",
         "viewUpdates": "View Updates",
         "addonUpdaterNotificationTitle": "Addon Updater",
         "addonUpdatesAvailable": {

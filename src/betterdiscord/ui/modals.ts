@@ -232,11 +232,18 @@ export default class Modals {
         });
     }
 
-    static showChangelogModal(options: ChangelogProps = {}) {
-        const key = this.openModal(props => {
-            return React.createElement(ErrorBoundary, {id: "showChangelogModal", name: "Modals"}, React.createElement(ChangelogModal, Object.assign({}, options, props)));
+    private static openChangelogModal(options: ChangelogProps, coreFooter: boolean) {
+        return this.openModal(props => {
+            return React.createElement(ErrorBoundary, {id: "showChangelogModal", name: "Modals"}, React.createElement(ChangelogModal, Object.assign({}, options, props, {coreFooter})));
         });
-        return key;
+    }
+
+    static showChangelogModal(options: ChangelogProps = {}) {
+        return this.openChangelogModal(options, false);
+    }
+
+    static showCoreChangelogModal(options: ChangelogProps = {}) {
+        return this.openChangelogModal(options, true);
     }
 
     /**

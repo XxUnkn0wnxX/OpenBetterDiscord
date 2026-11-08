@@ -127,7 +127,7 @@
                 },
                 "checkForUpdates": {
                     "name": "Automatisch nach Updates suchen",
-                    "note": "Überprüfen Sie regelmäßig nach Updates für Ihre Addons und Core BD"
+                    "note": "Überprüfen Sie regelmäßig nach Updates für Ihre Addons und Core OBD"
                 },
                 "updateInterval": {
                     "name": "Aktualisierungsintervall",
@@ -433,9 +433,9 @@
     },
     "Updater": {
         "updateFailed": "Update fehlgeschlagen!",
-        "updateFailedMessage": "BetterDiscord konnte nicht aktualisiert werden. Bitte lade die neueste Version des Installers von unserer Website (https:\/\/betterdiscord.app\/) herunter und installiere erneut.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Update erfolgreich!",
-        "updateAvailable": "BetterDiscord hat ein neues Update (v{{version}})",
+        "updateAvailable": "Open BetterDiscord hat ein neues Update (v{{version}})",
         "viewUpdates": "Aktualisierungen anzeigen",
         "addonUpdaterNotificationTitle": "Addon-Updater",
         "addonUpdatesAvailable": {

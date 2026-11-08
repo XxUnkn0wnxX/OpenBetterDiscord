@@ -258,7 +258,7 @@ function migrateVersionDirectory() {
         const resources = latest.resourcesPath;
         const existing = readJson(path.join(resources, "app", markerFilename));
         if (isMarker(existing) && existing.installationId === marker.installationId && fs.existsSync(path.join(resources, wrappedAsarFilename))) {
-            return appendLog(logPath, "Target version already has the matching BetterDiscord wrapper");
+            return appendLog(logPath, "Target version already has the matching Open BetterDiscord wrapper");
         }
 
         writeWrapper(resources, marker);

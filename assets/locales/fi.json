@@ -433,9 +433,9 @@
     },
     "Updater": {
         "updateFailed": "Päivitys epäonnistui",
-        "updateFailedMessage": "BetterDiscordin päivitys epäonnistui. Lataa asennusohjelman uusin versio verkkosivustoltamme (https:\/\/betterdiscord.app\/) ja asenna se uudelleen.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Päivittäminen onnistui!",
-        "updateAvailable": "BetterDiscordilla on uusi päivitys (v{{version}})",
+        "updateAvailable": "Open BetterDiscordilla on uusi päivitys (v{{version}})",
         "viewUpdates": "",
         "addonUpdaterNotificationTitle": "",
         "addonUpdatesAvailable": {

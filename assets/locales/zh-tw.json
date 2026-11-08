@@ -127,11 +127,11 @@
                 },
                 "checkForUpdates": {
                     "name": "自動檢查更新",
-                    "note": "定期檢查擴充功能及 BetterDiscord 主體的更新"
+                    "note": "定期檢查擴充功能及 Open BetterDiscord 主體的更新"
                 },
                 "updateInterval": {
                     "name": "檢查更新頻率",
-                    "note": "檢查擴充功能與 BetterDiscord 主體更新的間隔"
+                    "note": "檢查擴充功能與 Open BetterDiscord 主體更新的間隔"
                 }
             },
             "customcss": {
@@ -426,9 +426,9 @@
     },
     "Updater": {
         "updateFailed": "更新失敗！",
-        "updateFailedMessage": "BetterDiscord 更新失敗。請從我們的網站 (https:\/\/betterdiscord.app\/) 下載最新版本的安裝程式並重新安裝。",
+        "updateFailedMessage": "",
         "updateSuccessful": "更新成功！",
-        "updateAvailable": "BetterDiscord 已有新的版本 ({{version}})",
+        "updateAvailable": "Open BetterDiscord 已有新的版本 ({{version}})",
         "viewUpdates": "檢視更新",
         "addonUpdaterNotificationTitle": "擴充功能更新工具",
         "addonUpdatesAvailable": {

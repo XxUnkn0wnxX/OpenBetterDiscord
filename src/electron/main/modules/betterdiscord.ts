@@ -162,7 +162,7 @@ export default class BetterDiscord {
                 title: "Discord Crashed",
                 type: "warning",
                 message: "Something crashed your Discord Client",
-                detail: "BetterDiscord has automatically disabled itself just in case. To enable it again, restart Discord or click the button below.\n\nThis may have been caused by a plugin. Try moving all of your plugins outside the plugin folder and see if Discord still crashed.",
+                detail: "Open BetterDiscord has automatically disabled itself just in case. To enable it again, restart Discord or click the button below.\n\nThis may have been caused by a plugin. Try moving all of your plugins outside the plugin folder and see if Discord still crashed.",
                 buttons: ["Try Again", "Open Plugins Folder", "Cancel"],
             }).then((result) => {
                 if (result.response === 0) {

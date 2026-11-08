@@ -54,7 +54,7 @@ export default new class DebugLogs extends Builtin {
             if (revision !== this.captureRevision || !this.get<boolean>("debugLogs")) return;
             const provider = providerHosts[event.provider];
             if (event.kind === "update-success") {
-                const source = event.source === "betterdiscord" ? "BetterDiscord token" : "a supplied token";
+                const source = event.source === "betterdiscord" ? "Open BetterDiscord token" : "a supplied token";
                 Logger.info("ProviderTokens", `${event.addon}: ${provider} update request succeeded (HTTP ${event.status}) using ${source} ${event.maskedToken}.`);
                 return;
             }

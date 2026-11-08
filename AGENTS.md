@@ -1,4 +1,4 @@
-# BetterDiscord Fork Notes
+# Open BetterDiscord Fork Notes
 
 ## Branch And Remote Model
 
@@ -9,6 +9,14 @@
 ## Local Fork Rules
 
 - Keep fork behavior and fork-specific compatibility fixes intact unless the user explicitly approves changing them.
+- Preserve fork branding during upstream adaptations: fork-facing UI, generated
+  recovery/debug report text and documentation use `Open BetterDiscord`, with
+  `OBD` for presentation abbreviations. Keep the README title
+  `Open BetterDiscord macOS fork` and repository identity `OpenBetterDiscord`.
+  Do not restore upstream display names or replace fork-owned loading artwork
+  when taking upstream hunks. Keep stable
+  API/type/global/path/protocol/ASAR identifiers and actual upstream attribution
+  literal; branding is not an API or installed-data migration.
 - Preserve `local-build.zsh`, `local-inject.zsh`, and `local-uninject.zsh`.
 - Treat `.tmp/` as local-only scratch; never commit it unless explicitly asked.
 - `.gitignore` excludes `.tmp/`, `mergedocs/`, and `.venv/` as local-only files.
@@ -223,13 +231,13 @@ Use this only for requested live export/runtime lookup verification.
 
 1. Keep the targeted audit plugin in `.tmp/`; update it when runtime expectations
    change. Manage its symlink directly, including unlink/re-link, without waiting
-   for confirmation; BD handles file load/unload automatically. The user manually
+   for confirmation; OBD handles file load/unload automatically. The user manually
    enables it after a fresh link/re-link. Do not edit `plugins.json` to enable it
    or make it a permanent feature unless explicitly asked.
 2. Verify Stable first, then PTB/Canary when client differences matter. Use the
    authorized build/injection loop above; a completed fix requires fresh release
    injection, full relaunch and a report/log pass, not only dev injection. After
-   20–30 seconds, compare client-prefixed reports with the newest BD debug/console log.
+   20–30 seconds, compare client-prefixed reports with the newest OBD debug/console log.
 3. Reports should be bounded, automatic and UI confirmation tooltip-based, not dependent
    on console commands. Force-load only gentle targets; skip any target that
    risks freezing startup.
@@ -249,9 +257,9 @@ the user explicitly authorizes deletion.
 ### AdGuard and HTTPS failures
 
 When HTTPS succeeds in the terminal but stalls inside Discord, consider AdGuard
-filtering before changing BD's transport or increasing timeouts. A previous
+filtering before changing OBD's transport or increasing timeouts. A previous
 git.slowb.ro update request completed TLS but received no response headers;
-the same BD build succeeded after the user disabled AdGuard and relaunched.
+the same OBD build succeeded after the user disabled AdGuard and relaunched.
 This is a diagnostic lead, not proof that every HTTPS failure has the same cause.
 Compare the actual Discord request with filtering off or a host-specific HTTPS
 exclusion, under user control. DNS allowlisting, HTTPS inspection and Network
@@ -307,7 +315,7 @@ Preserve this inventory during merges unless the user explicitly approves a chan
 
 Docs, ignore rules, and release metadata:
 
-- README CI badges point at `XxUnkn0wnxX/BetterDiscord` and branch `develop`
+- README CI badges point at `XxUnkn0wnxX/OpenBetterDiscord` and branch `develop`
 - `docs/manual-install.md` documents the fork's Bun build, normal injection, and local macOS wrapper workflow
 - CI publishes the rolling `develop-latest` release instead of upstream's canary
   tag/release flow and keeps the timeout flow at 45 seconds. Normal push and
@@ -321,21 +329,21 @@ Wrapper and injector details:
 
 - `scripts/inject.ts` runs sanity checks against `dist/`, even when release injection points at `dist/betterdiscord.asar`
 - Windows/Linux injector, uninjector, and migration discovery supports both `app-X.Y.Z` and plain `X.Y.Z` directories, but only when they contain the modern application ASAR/wrapper payload; do not restore desktop-core-only injection
-- if upstream changes injection structure again, preserve this fork's current cross-platform discovery, local wrappers, macOS recovery/PID/logging, and BetterDiscord/OpenAsar handoff plumbing; adapt only the required target layout and paths (currently BetterDiscord lives in `Contents/Resources/app/`, followed by the stock or OpenAsar payload in `Contents/Resources/betterdiscord.app.asar`) unless the user explicitly approves replacing the plumbing
+- if upstream changes injection structure again, preserve this fork's current cross-platform discovery, local wrappers, macOS recovery/PID/logging, and Open BetterDiscord/OpenAsar handoff plumbing; adapt only the required target layout and paths (currently Open BetterDiscord lives in `Contents/Resources/app/`, followed by the stock or OpenAsar payload in `Contents/Resources/betterdiscord.app.asar`) unless the user explicitly approves replacing the plumbing
 - macOS installed recovery uses `/usr/bin/env zsh -f` with a fixed system `PATH` and a small environment allowlist; Bun remains build/manual injection tooling only
-- preserve the build-time `--macos-recovery-timeout-seconds` option and `BETTERDISCORD_MACOS_RECOVERY_TIMEOUT_SECONDS`; direct builds default to 90 seconds, fork workflows use 45 seconds, and matching OpenAsar builds add their own 10-second BetterDiscord handoff grace
+- preserve the build-time `--macos-recovery-timeout-seconds` option and `BETTERDISCORD_MACOS_RECOVERY_TIMEOUT_SECONDS`; direct builds default to 90 seconds, fork workflows use 45 seconds, and matching OpenAsar builds add their own 10-second Open BetterDiscord handoff grace
 - macOS recovery keeps per-run wrapper assets under a unique recovery ID, owns `betterdiscord-update-helper.pid` as a detached process-group leader, and stops its helper descendants when that PID receives `TERM`
 - superseded or terminated macOS helpers remove only their own recovery-run assets; `TERM` rolls back an owned pre-publication move but must not touch state owned by another run or undo a wrapper already published through `wrapper-ready.json`
 - preserve the two replace-per-run logs in `betterdiscord-bootstrap`: `betterdiscord-bootstrap.log` and `betterdiscord-bootstrap-console.log`
-- preserve BetterDiscord/OpenAsar coordination through matching installation/channel/target identity, source Discord PID, OpenAsar handoff ID, BetterDiscord recovery run ID, and `wrapper-ready.json`; BetterDiscord rebuilds the wrapper first and OpenAsar then restores the nested payload
-- if OpenAsar's prepended quit guard publishes after BetterDiscord arms, BetterDiscord may adopt it only for the same source Discord PID and its exact recovery run, then must freeze that handoff ID
+- preserve Open BetterDiscord/OpenAsar coordination through matching installation/channel/target identity, source Discord PID, OpenAsar handoff ID, Open BetterDiscord recovery run ID, and `wrapper-ready.json`; Open BetterDiscord rebuilds the wrapper first and OpenAsar then restores the nested payload
+- if OpenAsar's prepended quit guard publishes after Open BetterDiscord arms, Open BetterDiscord may adopt it only for the same source Discord PID and its exact recovery run, then must freeze that handoff ID
 - normal or fast user quits may repair replaced ASARs but must stay closed; only a current explicit updater-restart signal may authorize either helper to relaunch Discord
-- when a live, identity-matched OpenAsar helper already owns a fresh `wrapper-ready.json` handoff, BetterDiscord's macOS `before-quit` path must preserve that marker and skip a redundant recovery arm; never reintroduce the early-launch quit race that deletes the handoff before OpenAsar restores the nested payload
+- when a live, identity-matched OpenAsar helper already owns a fresh `wrapper-ready.json` handoff, Open BetterDiscord's macOS `before-quit` path must preserve that marker and skip a redundant recovery arm; never reintroduce the early-launch quit race that deletes the handoff before OpenAsar restores the nested payload
 - accept optional legacy `helperRuntime` marker data for safe upgrades, but never write or execute Bun from installed recovery
 
 Updater and runtime behavior:
 
-- BetterDiscord core update checks are disabled at startup, on the scheduler,
+- Open BetterDiscord core update checks are disabled at startup, on the scheduler,
   and from the Updates-panel action; keep all three calls commented out and
   dormant.
 - Plugin and theme updater checks remain active; do not suppress `PluginUpdater` or `ThemeUpdater`

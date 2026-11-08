@@ -1,8 +1,8 @@
 # Optional addon update tokens
 
 Add a GitHub, GitLab.com or git.slowb.ro token to authorize eligible plugin/theme
-updates managed by BetterDiscord. Saved tokens serve these updates and their
-validation only. Leave a provider's field empty to disable its saved token.
+updates managed by Open BetterDiscord (OBD). Saved tokens serve these updates
+and their validation only. Leave a provider's field empty to disable its saved token.
 See the [updater guide](addon-updater.md) for source selection and installation.
 
 GitHub normally allows **60 anonymous requests/hour per IP**, or **5,000
@@ -26,16 +26,17 @@ allowance; secondary limits still apply.
 > or deletion if the token leaks. Addon updates do not need them.
 
 Extra permissions do **not** cause rejection: an existing token is accepted when
-the required read checks pass. BetterDiscord's validation and update requests
-remain read-only.
+the required read checks pass. Open BetterDiscord's validation and update
+requests remain read-only.
 
 ## GitHub fine-grained token
 
 1. Open [Create a fine-grained token](https://github.com/settings/personal-access-tokens/new).
-2. Name it **BetterDiscord addon updates** and choose an expiration.
+2. Name it **Open BetterDiscord addon updates** and choose an expiration.
 3. Select your personal account as **Resource owner**.
 4. Keep **public-only** repository access and leave extra permissions unselected.
-5. Select **Generate token**, then paste it into **GitHub Token** in BetterDiscord.
+5. Select **Generate token**, then paste it into **GitHub Token** in Open
+   BetterDiscord.
 
 Public repository reads are included automatically.
 [GitHub token guide](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
@@ -88,7 +89,7 @@ prove access to every selected project.**
 ## git.slowb.ro token
 
 1. Open [Settings → Applications](https://git.slowb.ro/user/settings/applications).
-2. Create a token named **BetterDiscord addon updates**.
+2. Create a token named **Open BetterDiscord addon updates**.
 3. Select **Public only**.
 4. Give **user** and **repository** **Read** access (`read:user`, `read:repository`).
 5. Generate and paste it into **git.slowb.ro Token**.
@@ -100,7 +101,7 @@ include the user permission this validator needs.
 
 ## Add, replace or remove
 
-1. Open **User Settings → BetterDiscord → Settings → Access Tokens**, beside **Addon Manager**.
+1. Open **User Settings → Open BetterDiscord → Settings → Access Tokens**, beside **Addon Manager**.
 2. Paste only the token: no `Bearer` prefix or quotes.
 3. Wait for validation. **Yellow** means checking; **red** means invalid or confirmed missing permissions.
 4. A successful check saves automatically. Use the eye button to reveal/hide the value.
@@ -137,13 +138,13 @@ Stable, PTB and Canary keep separate settings.
 
 ## Which requests use a token?
 
-**For BetterDiscord-managed updates:** request-supplied credentials → saved
+**For Open BetterDiscord-managed updates:** request-supplied credentials → saved
 provider token → anonymous. Empty/scheme-only authorization allows fallback; a
 supplied nonempty credential is preserved even when invalid.
 
 Public `BdApi.Net.fetch` calls never receive saved tokens or join their usage
 reporting and reactive validation. Independent plugin self-updaters supply their
-own credentials and handle their own authentication. BD does not inspect plugin
+own credentials and handle their own authentication. OBD does not inspect plugin
 settings or intercept custom Node/browser networking.
 
 | Provider | Eligible HTTPS reads |
@@ -152,7 +153,8 @@ settings or intercept custom Node/browser networking.
 | GitLab.com | Recognized release/addon-file routes under `/api/v4`; managed snippet metadata |
 | git.slowb.ro | Recognized `/api/v1` repository routes and addon files under `/raw/branch/`, `/raw/tag/` or `/raw/commit/` |
 
-- Covers eligible metadata and addon-file requests made by BetterDiscord's managed plugin/theme updater.
+- Covers eligible metadata and addon-file requests made by Open BetterDiscord's
+  managed plugin/theme updater.
 - Drops generated authorization on redirects to another origin or unrelated path.
 - Does not authorize unrelated API calls, other raw/CDN hosts, self-hosted GitLab or GitHub Enterprise.
 
@@ -184,9 +186,9 @@ With **Developer Settings → Debug Logs** enabled, console and `debug.log` reco
 | Valid token, update fails | Check repository access, source URL and any addon-supplied credential taking priority. |
 | Rate-limit pause | Wait for the provider reset/backoff; normal updater cooldowns still apply. |
 
-If an eligible managed update using BD's saved token returns **401**:
+If an eligible managed update using OBD's saved token returns **401**:
 
-1. BD rechecks the credential; concurrent failures share one check.
+1. OBD rechecks the credential; concurrent failures share one check.
 2. A confirmed invalid token is cleared only if it is still the current saved value.
 3. The open field clears/remasks, and a persistent warning stays until **Dismiss** or **×**.
 

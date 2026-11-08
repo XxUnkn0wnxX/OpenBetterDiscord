@@ -1,4 +1,4 @@
-name: BetterDiscord CI
+name: Open BetterDiscord CI
 
 on:
   workflow_dispatch:
@@ -93,5 +93,5 @@ jobs:
           notes="$(printf 'Rolling release for the latest develop commit.\n\nCommit: %s\n' "${GITHUB_SHA}")"
           gh release create develop-latest dist/betterdiscord.asar dist/checksums.txt \
             --target "${GITHUB_SHA}" \
-            --title "BD Dev Fork" \
+            --title "OBD Dev Fork" \
             --notes "${notes}"

@@ -5,12 +5,12 @@ import ipc from "@modules/ipc";
 export default {
     id: "restart",
     name: "restart",
-    description: "Restart Discord with or without BetterDiscord",
+    description: "Restart Discord with or without Open BetterDiscord",
     options: [
         {
             type: OptionTypes.BOOLEAN,
             name: "vanilla",
-            description: "Should Discord be relaunched without BetterDiscord?",
+            description: "Should Discord be relaunched without Open BetterDiscord?",
             required: true,
         },
     ],

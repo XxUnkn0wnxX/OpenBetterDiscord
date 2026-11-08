@@ -55,7 +55,7 @@ let recoveryDisabledByThisRun = false;
 if (check) {
     const layout = inspectInjection(resources);
     if (layout.kind === "plain-asar" || layout.kind === "plain-directory" || layout.kind === "missing") {
-        console.log(`${release} does not have a BetterDiscord app wrapper.`);
+        console.log(`${release} does not have an Open BetterDiscord app wrapper.`);
         process.exit(3);
     }
     if (layout.kind === "unsafe") throw new Error(`Refusing to uninject ${release}: ${layout.reason}`);
@@ -105,7 +105,7 @@ function stopMacRecoveryHelper(): void {
     const rawPid = fs.readFileSync(pidPath, "utf8").trim();
     if (!/^\d+$/.test(rawPid) || Number(rawPid) <= 0) {
         fs.rmSync(pidPath, {force: true});
-        console.log(`Removed an invalid BetterDiscord recovery PID file for ${release}`);
+        console.log(`Removed an invalid Open BetterDiscord recovery PID file for ${release}`);
         return;
     }
 
@@ -113,7 +113,7 @@ function stopMacRecoveryHelper(): void {
     let helper = readMacHelperProcess(helperPid);
     if (!helper) {
         fs.rmSync(pidPath, {force: true});
-        console.log(`Removed a stale BetterDiscord recovery PID file for ${release}`);
+        console.log(`Removed a stale Open BetterDiscord recovery PID file for ${release}`);
         return;
     }
     const helperPath = path.join(bootstrapDirectory, "betterdiscord-update-helper.zsh");
@@ -126,10 +126,10 @@ function stopMacRecoveryHelper(): void {
     const helperCommandMatches = (command: string) => helperPrefixes.some(prefix => command.startsWith(prefix));
     const helperNameMatches = helperCommandMatches(helper.command);
     if (!helperNameMatches || !helper.command.includes(bootstrapDirectory) || helper.pgid !== helperPid) {
-        throw new Error(`Refusing to signal PID ${helperPid}; it is not ${release}'s BetterDiscord recovery process-group owner`);
+        throw new Error(`Refusing to signal PID ${helperPid}; it is not ${release}'s Open BetterDiscord recovery process-group owner`);
     }
 
-    console.log(`Stopping BetterDiscord recovery helper for ${release} (PID ${helperPid} and its helper descendants)`);
+    console.log(`Stopping Open BetterDiscord recovery helper for ${release} (PID ${helperPid} and its helper descendants)`);
     try {process.kill(-helperPid, "SIGTERM");}
     catch {/* The helper can finish after validation. */}
     if (!waitForMacHelperExit(helperPid)) {
@@ -137,12 +137,12 @@ function stopMacRecoveryHelper(): void {
         const stillMatches = helper
             && helper.pgid === helperPid
             && helperCommandMatches(helper.command);
-        if (!stillMatches) throw new Error(`Refusing a forced helper stop because PID ${helperPid} no longer matches BetterDiscord recovery`);
+        if (!stillMatches) throw new Error(`Refusing a forced helper stop because PID ${helperPid} no longer matches Open BetterDiscord recovery`);
         try {process.kill(-helperPid, "SIGKILL");}
         catch {
-            if (macHelperIsRunning(helperPid)) throw new Error(`Could not stop ${release}'s BetterDiscord recovery process group`);
+            if (macHelperIsRunning(helperPid)) throw new Error(`Could not stop ${release}'s Open BetterDiscord recovery process group`);
         }
-        if (!waitForMacHelperExit(helperPid)) throw new Error(`${release}'s BetterDiscord recovery helper did not stop`);
+        if (!waitForMacHelperExit(helperPid)) throw new Error(`${release}'s Open BetterDiscord recovery helper did not stop`);
     }
     fs.rmSync(pidPath, {force: true});
 }
@@ -184,7 +184,7 @@ if (prepare) {
         process.exit(0);
     }
     if (dryRun) {
-        console.log(`[dry-run] Would disable BetterDiscord update recovery for ${release}`);
+        console.log(`[dry-run] Would disable Open BetterDiscord update recovery for ${release}`);
     }
     else {
         assertRecoveryMarkerSafe();
@@ -195,7 +195,7 @@ if (prepare) {
 
 const layout = inspectInjection(resources);
 if (layout.kind === "plain-asar" || layout.kind === "plain-directory" || layout.kind === "missing") {
-    console.log(`${release} does not have a BetterDiscord app wrapper.`);
+    console.log(`${release} does not have an Open BetterDiscord app wrapper.`);
     process.exit(0);
 }
 if (layout.kind === "unsafe") throw new Error(`Refusing to uninject ${release}: ${layout.reason}`);
@@ -224,4 +224,4 @@ catch (error) {
     }
     throw error;
 }
-console.log(dryRun ? `Dry-run complete; ${release} was not modified.` : `BetterDiscord uninjected from ${release}.`);
+console.log(dryRun ? `Dry-run complete; ${release} was not modified.` : `Open BetterDiscord uninjected from ${release}.`);

@@ -1,4 +1,4 @@
-# BetterDiscord documentation
+# Open BetterDiscord documentation
 
 ## Guides
 

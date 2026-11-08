@@ -127,7 +127,7 @@
                 },
                 "checkForUpdates": {
                     "name": "בדיקה אוטומטית של עדכונים",
-                    "note": "בודק מעת לעת אם יש עדכונים לתוספים ול-BD הליבה שלך"
+                    "note": "בודק מעת לעת אם יש עדכונים לתוספים ול-OBD הליבה שלך"
                 },
                 "updateInterval": {
                     "name": "מרווח בדיקת עדכון",
@@ -440,9 +440,9 @@
     },
     "Updater": {
         "updateFailed": "עדכון נכשל!",
-        "updateFailedMessage": "עדכון BetterDiscord נכשל. אנא הורד את הגרסה האחרונה של תוכנית ההתקנה מהאתר שלנו (https:\/\/betterdiscord.app\/) והתקן מחדש.",
+        "updateFailedMessage": "",
         "updateSuccessful": "העדכון הצליח!",
-        "updateAvailable": "ל-BetterDiscord יש עדכון חדש (v{{version}})",
+        "updateAvailable": "ל-Open BetterDiscord יש עדכון חדש (v{{version}})",
         "viewUpdates": "הצג עדכונים",
         "addonUpdaterNotificationTitle": "עדכון תוספים",
         "addonUpdatesAvailable": {

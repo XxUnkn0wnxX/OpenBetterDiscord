@@ -127,11 +127,11 @@
                 },
                 "checkForUpdates": {
                     "name": "자동 업데이트 확인",
-                    "note": "애드온 및 BetterDiscord core 업데이트를 주기적으로 확인합니다"
+                    "note": "애드온 및 Open BetterDiscord core 업데이트를 주기적으로 확인합니다"
                 },
                 "updateInterval": {
                     "name": "업데이트 확인 간격",
-                    "note": "애드온 및 BetterDiscord core 업데이트 확인 주기"
+                    "note": "애드온 및 Open BetterDiscord core 업데이트 확인 주기"
                 }
             },
             "customcss": {
@@ -426,9 +426,9 @@
     },
     "Updater": {
         "updateFailed": "업데이트가 실패했습니다!",
-        "updateFailedMessage": "BetterDiscord가 업데이트에 실패했습니다. 저희 웹사이트 (https:\/\/betterdiscord.app\/) 에서 설치기를 받아 재설치하십시오.",
+        "updateFailedMessage": "",
         "updateSuccessful": "업데이트가 성공적으로 완료되었습니다!",
-        "updateAvailable": "BetterDiscord에 새로운 업데이트가 있습니다 (v{{version}})",
+        "updateAvailable": "Open BetterDiscord에 새로운 업데이트가 있습니다 (v{{version}})",
         "viewUpdates": "업데이트 보기",
         "addonUpdaterNotificationTitle": "애드온 업데이터",
         "addonUpdatesAvailable": {

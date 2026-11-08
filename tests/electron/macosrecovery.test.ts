@@ -295,7 +295,7 @@ print -r -- "$((count + 1))" > "$root/registration-attempts"
             readyAt: expect.stringMatching(/Z$/),
         });
         expect(fs.readFileSync(run.logPath, "utf8")).toContain("restart was not requested; leaving Discord closed");
-        expect(fs.readFileSync(run.logPath, "utf8")).not.toContain("BetterDiscord owns relaunch");
+        expect(fs.readFileSync(run.logPath, "utf8")).not.toContain("Open BetterDiscord owns relaunch");
         expect(fs.readFileSync(run.logPath, "utf8")).not.toContain("old human log");
         expect(fs.readFileSync(run.consoleLogPath, "utf8")).not.toContain("old console log");
         expect(JSON.parse(fs.readFileSync(run.shipItRequestPath, "utf8")).launchAfterInstallation).toBe(false);
@@ -312,9 +312,9 @@ print -r -- "$((count + 1))" > "$root/registration-attempts"
         expect(fs.readFileSync(path.join(run.resources, "betterdiscord.app.asar"), "utf8")).toBe("existing Discord payload");
         expect(fs.existsSync(path.join(run.resources, "app.asar"))).toBe(false);
         const log = fs.readFileSync(run.logPath, "utf8");
-        expect(log).toContain("leaving the existing BetterDiscord wrapper unchanged");
-        expect(log).not.toContain("BetterDiscord owns relaunch");
-        expect(log).not.toContain("Rolled back the incomplete BetterDiscord wrapper");
+        expect(log).toContain("leaving the existing Open BetterDiscord wrapper unchanged");
+        expect(log).not.toContain("Open BetterDiscord owns relaunch");
+        expect(log).not.toContain("Rolled back the incomplete Open BetterDiscord wrapper");
         expect(fs.existsSync(run.helperPidPath)).toBe(false);
         expect(fs.existsSync(run.activeRunPath)).toBe(false);
         expect(fs.existsSync(run.statePath)).toBe(false);
@@ -344,10 +344,10 @@ print -r -- "$((count + 1))" > "$root/registration-attempts"
         const log = fs.readFileSync(run.logPath, "utf8");
         expect(log).toContain("Adopted same-process OpenAsar handoff");
         expect(log).toContain("Published no-update result for matching OpenAsar handoff");
-        expect(log).not.toContain("BetterDiscord owns relaunch");
+        expect(log).not.toContain("Open BetterDiscord owns relaunch");
     });
 
-    test("stamps a same-process OpenAsar handoff published after BetterDiscord arms", () => {
+    test("stamps a same-process OpenAsar handoff published after Open BetterDiscord arms", () => {
         const run = runRecovery(true, false, "test-run", "test-run", false, false, "missing", false, "late-match");
         if (!run) return;
 
@@ -402,7 +402,7 @@ print -r -- "$((count + 1))" > "$root/registration-attempts"
 
         expect(run.result.status).toBe(0);
         expect(fs.readFileSync(run.logPath, "utf8")).toContain("OpenAsar owns nested restore and optional relaunch");
-        expect(fs.readFileSync(run.logPath, "utf8")).not.toContain("BetterDiscord owns relaunch");
+        expect(fs.readFileSync(run.logPath, "utf8")).not.toContain("Open BetterDiscord owns relaunch");
     });
 
     test("honors deliberate recovery disable before changing Discord", () => {
@@ -468,7 +468,7 @@ print -r -- "$((count + 1))" > "$root/registration-attempts"
         expect(fs.readFileSync(path.join(run.resources, "app.asar"), "utf8")).toBe("fresh Discord payload");
         expect(fs.existsSync(path.join(run.resources, "betterdiscord.app.asar"))).toBe(false);
         expect(fs.readFileSync(run.logPath, "utf8")).toContain("fresh resources layout is ambiguous");
-        expect(fs.readFileSync(run.logPath, "utf8")).toContain("BetterDiscord owns relaunch");
+        expect(fs.readFileSync(run.logPath, "utf8")).toContain("Open BetterDiscord owns relaunch");
         expect(fs.existsSync(run.helperPidPath)).toBe(false);
     });
 
@@ -482,7 +482,7 @@ print -r -- "$((count + 1))" > "$root/registration-attempts"
         expect(fs.existsSync(path.join(run.resources, "betterdiscord.app.asar"))).toBe(false);
         const log = fs.readFileSync(run.logPath, "utf8");
         expect(log).toContain("wrapper-ready marker creation failed");
-        expect(log.indexOf("Rolled back the incomplete BetterDiscord wrapper")).toBeLessThan(log.indexOf("BetterDiscord owns relaunch"));
+        expect(log.indexOf("Rolled back the incomplete Open BetterDiscord wrapper")).toBeLessThan(log.indexOf("Open BetterDiscord owns relaunch"));
     });
 
 });

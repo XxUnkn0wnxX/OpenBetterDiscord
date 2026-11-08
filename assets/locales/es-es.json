@@ -127,7 +127,7 @@
                 },
                 "checkForUpdates": {
                     "name": "Buscar actualizaciones automáticamente",
-                    "note": "Comprueba periódicamente si hay actualizaciones para tu complemento y el núcleo de BD"
+                    "note": "Comprueba periódicamente si hay actualizaciones para tu complemento y el núcleo de OBD"
                 },
                 "updateInterval": {
                     "name": "Intervalo de comprobación de actualización",
@@ -433,9 +433,9 @@
     },
     "Updater": {
         "updateFailed": "",
-        "updateFailedMessage": "BetterDiscord tuvo un error al actualizarse. Descargue la última versión del instalador desde nuestro sitio web\n(https:\/\/betterdiscord.app\/) y reinstala.",
+        "updateFailedMessage": "",
         "updateSuccessful": "¡Actualización exitosa!",
-        "updateAvailable": "BetterDiscord tiene una nueva actualización (v{{version}})",
+        "updateAvailable": "Open BetterDiscord tiene una nueva actualización (v{{version}})",
         "viewUpdates": "Ver actualizaciones",
         "addonUpdaterNotificationTitle": "Actualizador de complementos",
         "addonUpdatesAvailable": {

@@ -1,4 +1,4 @@
-# Optional BetterDiscord Plugin APIs
+# Optional Open BetterDiscord Plugin APIs
 
 Optional APIs that can simplify plugin code, documented separately from the
 fork's implementation contracts. Availability below is verified against this
@@ -126,7 +126,7 @@ fixtures cover row operations, dependencies, callback order, multiple selection
 and options arriving after an empty list. Those fixtures do not prove native
 popover positioning, dragging or operation on every supported client. The
 final-release older-client audit remains pending; handle availability when
-supporting BetterDiscord versions without these optional additions.
+supporting upstream BetterDiscord versions without these optional additions.
 
 ## Typed `BdApi.Webpack.getById`
 
@@ -211,7 +211,7 @@ APIs. Its operations are already available to the fork's older Electron targets;
 no new engine fallback is needed. Focused checks exercise the upstream matching
 semantics and public API on pinned Bun 1.1.20.
 
-A temporary live audit on 2026-10-14 (Melbourne), using BetterDiscord 1.14.3
+A temporary live audit on 2026-10-14 (Melbourne), using this fork’s 1.14.3 build
 from `91b26615` on Discord Stable with Electron 37.6.0 / Chromium 138.0.7204.251,
 passed twice: seven source-pattern checks per run, three verified cached-export
 matches (`children`, `channelId`, `guildId`), and zero lookup errors. It did not
@@ -229,7 +229,7 @@ chunk-loader shape, loads eligible chunks, and returns an array of entry
 module exports. It is not a general URL importer, a chunk-ID lookup, or a
 replacement for discovering the loader in the current Discord build.
 
-**This helper is opt-in.** BetterDiscord does not scan for or load lazy entries
+**This helper is opt-in.** Open BetterDiscord does not scan for or load lazy entries
 automatically. A plugin calls `loadEntry` when it needs the exports associated
 with a verified loader.
 

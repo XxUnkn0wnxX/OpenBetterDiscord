@@ -138,7 +138,7 @@ class CommandManager {
             avatar: "betterdiscord",
             id: "676620914632294467",
             bot: true,
-            username: "BetterDiscord",
+            username: "Open BetterDiscord",
             system: true,
         });
 
@@ -359,7 +359,7 @@ class CommandManager {
 
         return {
             integrationType: 0,
-            integrationTitle: caller,
+            integrationTitle: caller === "BetterDiscord" ? "Open BetterDiscord" : caller,
             inputType: InputTypes.BUILT_IN,
             get id() {return commandId;},
             get __registerId() {return commandId;},
@@ -411,7 +411,7 @@ class CommandManager {
         if (!this.#sections.has(caller)) {
             this.#sections.set(caller, {
                 id: caller,
-                name: caller,
+                name: caller === "BetterDiscord" ? "Open BetterDiscord" : caller,
                 type: 1,
                 key: "1",
                 icon: caller === "BetterDiscord" ? "https://github.com/BetterDiscord.png" : null,

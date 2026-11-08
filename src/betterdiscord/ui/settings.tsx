@@ -318,7 +318,7 @@ const SettingsRenderer = new class SettingsRenderer {
 
                 return layouts;
             },
-            useTitle: () => Object.assign(<LayerSettingTitle />, {toString: () => "BetterDiscord"}),
+            useTitle: () => Object.assign(<LayerSettingTitle />, {toString: () => "Open BetterDiscord"}),
         });
 
         Patcher.after("SettingsManager", rootLayout, "buildLayout", (_, __, res) => {
@@ -483,7 +483,7 @@ const SettingsRenderer = new class SettingsRenderer {
         }
 
         anchor.setAttribute("data-bd-version-copy", "true");
-        anchor.title = "Click to copy BetterDiscord debug info";
+        anchor.title = "Click to copy Open BetterDiscord debug info";
         this.versionInfoAnchor = anchor;
     }
 
@@ -502,16 +502,16 @@ const SettingsRenderer = new class SettingsRenderer {
         const versionText = discordInfo.version.join(".");
         const channelText = discordInfo.releaseChannel;
 
-        const candidates = Array.from(document.querySelectorAll<HTMLElement>("[class*=\"compactInfo__\"]"));
-        const infoNode = candidates.find((node) => {
+        const candidates = Array.from(document.querySelectorAll<HTMLElement>("[class*=\"compactInfo_\"]"));
+        const matches = candidates.filter((node) => {
             const text = node.textContent?.replace(/\s+/g, " ").trim();
             if (!text) return false;
             return text.includes(channelText) && text.includes(versionText);
         });
 
-        if (!infoNode) return null;
-
-        return infoNode.closest<HTMLElement>("[class*=\"clickable__\"][class*=\"compact__\"]") ?? infoNode.parentElement;
+        const clickable = matches.map(node => node.closest<HTMLElement>("[class*=\"clickable_\"][class*=\"compact_\"]"))
+            .find((node): node is HTMLElement => Boolean(node));
+        return clickable ?? matches[0]?.parentElement ?? null;
     }
 
     private renderVersionInformation() {
@@ -717,12 +717,12 @@ function LayerSettingTitle() {
                     return setNode;
                 }}
             >
-                BetterDiscord
+                Open BetterDiscord
             </div>
             {!!node && ReactDOM.createPortal(
                 <DiscordModules.Tooltip color="primary" position="top" text={t("Modals.changelog")}>
                     {props =>
-                        <Button {...props} className="bd-changelog-button" look={Button.Looks.BLANK} color={Button.Colors.TRANSPARENT} size={Button.Sizes.NONE} onClick={() => Modals.showChangelogModal(changelog)}>
+                        <Button {...props} className="bd-changelog-button" look={Button.Looks.BLANK} color={Button.Colors.TRANSPARENT} size={Button.Sizes.NONE} onClick={() => Modals.showCoreChangelogModal(changelog)}>
                             <HistoryIcon className="bd-icon" size="16px" />
                         </Button>
                     }

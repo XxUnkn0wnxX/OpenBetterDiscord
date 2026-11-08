@@ -127,11 +127,11 @@
                 },
                 "checkForUpdates": {
                     "name": "Automaticky kontrolovat aktualizace",
-                    "note": "Pravidelně kontroluje, jestli na tvé doplňky či na BetterDiscord jako takový nečekají nějaké aktualizace."
+                    "note": "Pravidelně kontroluje, jestli na tvé doplňky či na Open BetterDiscord jako takový nečekají nějaké aktualizace."
                 },
                 "updateInterval": {
                     "name": "Interval mezi kontrolami aktualizací",
-                    "note": "Jak často kontrolovat aktualizace doplňků nebo BetterDiscordu."
+                    "note": "Jak často kontrolovat aktualizace doplňků nebo Open BetterDiscordu."
                 }
             },
             "customcss": {
@@ -447,9 +447,9 @@
     },
     "Updater": {
         "updateFailed": "Aktualizace se nezdařila!",
-        "updateFailedMessage": "BetterDiscord se nepodařilo aktualizovat. Stáhni si, prosím, z našich stránek (https:\/\/betterdiscord.app\/) nejnovější verzi instalátoru a BetterDiscord přeinstaluj.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Úspěšně aktualizováno!",
-        "updateAvailable": "Je k dispozici nová aktualizace BetterDiscordu (v{{version}})",
+        "updateAvailable": "Je k dispozici nová aktualizace Open BetterDiscordu (v{{version}})",
         "viewUpdates": "Zobrazit aktualizace",
         "addonUpdaterNotificationTitle": "Aktualizátor doplňků",
         "addonUpdatesAvailable": {

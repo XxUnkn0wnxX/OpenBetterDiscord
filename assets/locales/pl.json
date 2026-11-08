@@ -447,9 +447,9 @@
     },
     "Updater": {
         "updateFailed": "Aktualizacja nie powiodła się!",
-        "updateFailedMessage": "Nie udało się zaktualizować BetterDiscorda. Pobierz najnowszy instalator z naszej strony (https:\/\/betterdiscord.app\/) i zainstaluj aplikację ponownie.",
+        "updateFailedMessage": "",
         "updateSuccessful": "Aktualizacja powiodła się!",
-        "updateAvailable": "Dostępna jest nowa aktualizacja BetterDiscorda (wersja {{version}})",
+        "updateAvailable": "Dostępna jest nowa aktualizacja Open BetterDiscorda (wersja {{version}})",
         "viewUpdates": "",
         "addonUpdaterNotificationTitle": "",
         "addonUpdatesAvailable": {

@@ -60,7 +60,7 @@ if (process.env.WSL_DISTRO_NAME) {
     const target = path.join(resources, "..", "..", "betterdiscord");
     bdPath = useBdRelease ? "../../../betterdiscord/betterdiscord.asar" : "../../../betterdiscord";
     if (dryRun) {
-        console.log(`    [dry-run] Would copy BetterDiscord ${mode} files to ${target}`);
+        console.log(`    [dry-run] Would copy Open BetterDiscord ${mode} files to ${target}`);
     }
     else if (useBdRelease) {
         fs.mkdirSync(target, {recursive: true});

@@ -1,4 +1,4 @@
-# BetterDiscord Changelog
+# Open BetterDiscord Changelog
 
 Release history begins with the restructured 1.0.0 release after context
 isolation changes. Upstream entries broadly mirror the client changelog;
@@ -7,10 +7,10 @@ fork additions are listed first.
 [Current fork highlights](#fork-highlights) · [Feature guides](docs/README.md) ·
 [Integration record](docs/fork-specific-changes.md)
 
-## Fork (1.14.5)
+## Open BetterDiscord (1.14.5)
 
-This fork now reports BetterDiscord `1.14.5` after integrating the upstream
-release metadata below; fork highlights remain additional fork-specific behavior.
+This Open BetterDiscord release reports version `1.14.5` after integrating the
+upstream release metadata below; the highlights remain fork-specific behavior.
 
 ### Fork highlights
 
@@ -22,13 +22,13 @@ release metadata below; fork highlights remain additional fork-specific behavior
 - Adopted upstream Webpack mapping/owner-key options and the supported plugin lifecycle. Headers determine metadata; the host no longer calls legacy `load()` or metadata getters. Plugins that initialize only in `load()` need to move that work into supported startup code.
 - Adopted upstream's targeted CSS performance fix and on-demand shared plugin observer. Deprecated Webpack helpers and plugin observer/navigation callbacks remain supported.
 - Updated message-group theme attributes through subscriptions, avoiding unnecessary message rerenders while keeping listener cleanup and missing-message handling safe.
-- Fixed a Discord crash when toggling Theme Attributes by keeping grouping hooks in BetterDiscord-owned components and cancelling pending patch lookups on disable.
+- Fixed a Discord crash when toggling Theme Attributes by keeping grouping hooks in Open BetterDiscord-owned components and cancelling pending patch lookups on disable.
 - Added Windows/Linux recovery when Discord reports a completed host update, retaining the existing quit fallback and the separate macOS recovery flow.
 - Added Webpack Source Viewer links with line/column navigation, validated IPC arguments, and bounded DevTools readiness. Existing addon-link aliases remain supported, and source-link protocol registration is shared with the Addon Store.
 - Adopted upstream notification-card behavior and flexible action-button sizing while preserving older-runtime compatibility, stable notification identity, and immediate programmatic closing.
 - Preserved the custom macOS injection, reinjection, recovery, and identity-matched OpenAsar bootstrap/handoff flow.
 - Added settings, Custom CSS/editor, Addon Store lifecycle, and Discord/Webpack compatibility fixes while retaining the fork's plugin-loading rules.
-- Added identity-aware plugin/theme updates that safely compare declared `@updateUrl` and Store candidates, with persistent scheduling, provider backoff, stale-state pruning, and optional failure notifications. BetterDiscord core update checks remain disabled.
+- Added identity-aware plugin/theme updates that safely compare declared `@updateUrl` and Store candidates, with persistent scheduling, provider backoff, stale-state pruning, and optional failure notifications. Open BetterDiscord core update checks remain disabled.
 - Kept fork-owned wrappers, documentation, and rolling `develop` release workflow, with the repository and CI pinned to Bun 1.1.20.
 
 See [Fork-Specific Behavior](docs/fork-specific-changes.md) for the complete
