@@ -3,9 +3,13 @@
 <div align="center">
 <img src=".images/Open-Better-Discord-two-line.svg" alt="Open BetterDiscord wordmark" width="800">
 
-</div>
+<br>
 
 [![CI Status][ci-badge]][ci-link] [![License][license-badge]][license-link] [![Discord][discord-badge]][discord-link] [![Reddit][reddit-badge]][reddit-link] [![Website][website-badge]][website-link] [![Docs][docs-badge]][docs-link] [![Translate][translate-badge]][translate-link]
+
+<br>
+
+</div>
 
 [ci-badge]: https://img.shields.io/github/actions/workflow/status/XxUnkn0wnxX/OpenBetterDiscord/ci.yml?branch=develop&logo=github&label=Build&color=B11F1F&style=for-the-badge
 [ci-link]: https://github.com/XxUnkn0wnxX/OpenBetterDiscord/actions/workflows/ci.yml
