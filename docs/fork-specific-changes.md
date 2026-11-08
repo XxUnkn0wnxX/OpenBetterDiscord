@@ -26,6 +26,37 @@ toolchain requirements.
 Integration sections retain their original evidence and revision context.
 [Documentation index](README.md) · [Project overview](../README.md)
 
+## 1.14.6 mounted-component refresh through 033d4cb1
+
+The reviewed `42562e12..033d4cb1` range adds upstream's
+`BdApi.ReactUtils.rerenderComponent`, its fiber traversal and the two private
+reconciler scheduler selectors. The helper and selectors follow the pinned
+upstream implementation. Preserve the fork's existing optional reconciler,
+`stack` and `errorStack` capabilities and their recovery signatures while adding
+the optional enqueue/schedule methods. Discovery failure must not make recovery
+assume those private exports exist.
+
+The public method accepts a component function or `[module, key]`, an optional
+fiber predicate, and returns `void`. It follows patch identity, updates matching
+fibers and alternates, and queues/schedules on the same upstream lane. Retain the
+upstream edge behavior: matching type references are replaced before missing
+scheduler detection, and a falsy queued root prevents scheduling. No speculative
+fallback, new public option or Electron-version gate is added. This integration
+does not change the updater, plugin enabled-state or installed recovery flow.
+
+The isolated source/API fixture covers direct and tuple calls, child/sibling
+traversal and filtering, patched/unpatched identity, alternate `elementType`,
+force flags, equal queue/schedule lanes, absent roots and missing capabilities.
+The same module/key case restores the original export and refreshes again,
+checking both fibers and the second scheduled update. Astra verified the pinned
+helper/selectors and preservation of optional recovery types. Parent combined
+verification passes 12 tests across six affected files; the strengthened rerender
+wrapper and locale correction then pass together in under one second. Scoped
+ESLint and the consolidated repository TypeScript check pass.
+Real-client discovery and a gentle patch/refresh/unpatch consumer remain pending
+at the final user-owned native gate; presence of an unused API does not establish
+runtime compatibility. See the [API contract and example](plugin-api-notes.md#bdapireactutilsrerendercomponent).
+
 ## 1.14.6 full-page addon settings through 033d4cb1
 
 The next group in the reviewed `42562e12..033d4cb1` range adopts upstream's

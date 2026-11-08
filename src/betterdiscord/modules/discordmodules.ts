@@ -20,6 +20,8 @@ interface Modules {
     ReactConciler?: {
         stack?: (value: unknown, fiber: Fiber) => {value: unknown; source: Fiber; stack: unknown;};
         errorStack?: (code: string | number, ...values: unknown[]) => string;
+        enqueueConcurrentRenderForLane?: (fiber: Fiber, lane: number) => object | null;
+        scheduleUpdateOnFiber?: (root: object, fiber: Fiber, lane: number) => void;
     };
 }
 
@@ -79,7 +81,9 @@ const SyncModules = getBulkKeyed<Modules>({
         cacheId: "core-ReactConciler",
         map: {
             stack: Filters.byStrings("value:", ".set"),
-            errorStack: Filters.byStrings("react.dev/errors/")
+            errorStack: Filters.byStrings("react.dev/errors/"),
+            enqueueConcurrentRenderForLane: Filters.byRegex(/\((\w+),(\w+)\)\{return \w+\(\1,null,null,\2\),\w+\(\1\)\}$/),
+            scheduleUpdateOnFiber: Filters.byStrings(".cancelPendingCommit)&&(")
         },
         mapDeclarations: true
     }

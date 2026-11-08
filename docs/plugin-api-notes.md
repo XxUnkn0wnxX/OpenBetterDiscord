@@ -4,7 +4,7 @@ Optional APIs that can simplify plugin code, documented separately from the
 fork's implementation contracts. Availability below is verified against this
 checkout, not inferred from a version number.
 
-**On this page:** [Addon settings](#addon-settings-navigation) · [Tables and dropdowns](#table-settings-and-dropdown-inputs) · [Typed `getById`](#typed-bdapiwebpackgetbyid) · [`byDestructure`](#bdapiwebpackfiltersbydestructure) · [`loadEntry`](#bdapiutilsloadentry) · [Maintaining these notes](#keeping-these-notes-current)
+**On this page:** [Component rerendering](#bdapireactutilsrerendercomponent) · [Addon settings](#addon-settings-navigation) · [Tables and dropdowns](#table-settings-and-dropdown-inputs) · [Typed `getById`](#typed-bdapiwebpackgetbyid) · [`byDestructure`](#bdapiwebpackfiltersbydestructure) · [`loadEntry`](#bdapiutilsloadentry) · [Maintaining these notes](#keeping-these-notes-current)
 
 | API | Availability in this checkout | What it is for |
 | --- | --- | --- |
@@ -14,6 +14,41 @@ checkout, not inferred from a version number.
 | `BdApi.Components.TableInput` and `buildSettingsPanel` table settings | Added on `develop` during the 1.14.6 adaptation. Focused source tests pass; native audit is pending after the final release build. | Edit an array of row objects with typed columns and row operations. |
 | `BdApi.Components.DropdownInput` search and multiple modes | Adopted with 1.14.6 table support; existing single-value mode remains supported. Native positioning and interaction checks are pending. | Filter choices and select multiple values. |
 | `BdApi.Plugins.openSettings` / `BdApi.Themes.openSettings` | Added during the 1.14.6 full-page settings adaptation. Focused source checks cover enabled-state and routing; native audit is pending. | Navigate to an enabled addon's existing settings panel. |
+| `BdApi.ReactUtils.rerenderComponent` | Adopted from upstream 1.14.6. The API and private scheduler discovery are present; real-client scheduler discovery and a harmless render consumer still require the final native audit. | Apply a component patch or unpatch to matching mounted fibers. |
+
+## `BdApi.ReactUtils.rerenderComponent`
+
+After patching or unpatching an inspected React component export, request a
+refresh of its mounted instances:
+
+```js
+function refreshMountedExport(verifiedModule, key) {
+    if (typeof BdApi.ReactUtils.rerenderComponent !== "function") return;
+    if (typeof verifiedModule?.[key] !== "function") return;
+    BdApi.ReactUtils.rerenderComponent([verifiedModule, key]);
+}
+```
+
+Discover and validate the actual component before patching it. Call the helper
+after applying a patch and again after unpatching if the mounted UI needs to
+reflect that change. It also accepts a function directly and an optional
+`(fiber) => boolean` predicate to restrict matching instances. The upstream
+implementation follows patched-function identity through `__originalFunction`;
+plugins should not create or alter that internal property themselves.
+
+The method returns `void`, rather than a count or completion promise. It scans
+the current `app-mount` React root and depends on Discord's private reconciler
+exports to queue and schedule updates on the same lane. Missing roots and
+non-function inputs do nothing. When scheduler discovery is unavailable, the
+upstream helper does not schedule a render, but still replaces matching fiber
+type references before checking that capability. It is not a general DOM
+rerender command or a guarantee that a private Discord component is compatible.
+
+Focused real-API fixtures cover direct/module-key input, traversal and filtering,
+patch/unpatch identity, alternates, scheduling and missing capabilities. Existing
+optional recovery-stack discovery remains intact. A supported-client audit must
+still verify both scheduler exports and a gentle mounted consumer through patch,
+refresh, unpatch and refresh; native success is pending.
 
 ## Addon settings navigation
 
