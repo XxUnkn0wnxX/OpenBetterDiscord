@@ -116,3 +116,35 @@ test("legacy modal retains matching unload lifecycle", async () => {
     await act(async () => Modals.showAddonSettingsModal("Name", <span>Panel</span>, {id: "Legacy", type: "plugin"}));
     await unload({id: "Legacy", type: "plugin"});
 });
+
+test("modal handoff installs watcher before releasing and suppresses invalid children", async () => {
+    let released = 0; let closed = 0; let current = false;
+    const opening = {isCurrent: () => current, release: () => {expect(Events.listenerCount("plugin-unloaded")).toBe(1); released++;}, cancel: () => {current = false;}};
+    await act(async () => root.render(<Lifecycle identity={{id: "Legacy", type: "plugin"}} onClose={() => {closed++;}} opening={opening}><span>stale</span></Lifecycle>));
+    expect(container.textContent).not.toContain("stale"); expect(closed).toBe(1); expect(released).toBe(1);
+    await act(async () => root.render(<Lifecycle identity={{id: "Legacy", type: "plugin"}} onClose={() => {closed++;}} opening={opening}><span>still stale</span></Lifecycle>));
+    expect(container.textContent).not.toContain("still stale"); expect(closed).toBe(1); expect(released).toBe(2);
+    await act(async () => Events.emit("plugin-unloaded", {id: "Legacy"})); expect(closed).toBe(1);
+});
+
+test("valid modal handoff watches before validation and releases temporary guard", async () => {
+    const order: string[] = []; let closes = 0;
+    const watch = (identity: AddonSettingsModalIdentity, close: () => void) => {order.push("watch"); return watchAddonSettingsUnload(identity, close);};
+    const TracedLifecycle = compile(`${lifecycleSource}\nreturn AddonSettingsModalLifecycle;`, ["React", "watchAddonSettingsUnload"], [React, watch]);
+    const opening = {isCurrent: () => {order.push("check"); return true;}, release: () => {order.push("release"); expect(Events.listenerCount("plugin-unloaded")).toBe(1);}, cancel: () => {}};
+    await act(async () => root.render(<TracedLifecycle identity={{id: "Legacy", type: "plugin"}} onClose={() => {closes++;}} opening={opening}><span>valid</span></TracedLifecycle>));
+    expect(container.textContent).toContain("valid"); expect(order).toEqual(["check", "watch", "check", "release"]);
+    await act(async () => {Events.emit("plugin-unloaded", {id: "other"}); Events.emit("plugin-unloaded", {id: "Legacy"}); Events.emit("plugin-unloaded", {id: "Legacy"});}); expect(closes).toBe(1);
+});
+
+test("actual modal method forwards the internal opening to the lifecycle", async () => {
+    const start = modalSource.indexOf("    static showAddonSettingsModal(");
+    const end = modalSource.indexOf("    static hasInitialized", start);
+    const method = modalSource.slice(start, end);
+    const Component = ({children}: {children?: React.ReactNode}) => <>{children}</>;
+    const Actual = compile(`class Actual {static createAddonSettingsContent(panel) {return panel;} static openModal(render) {return render({onClose: () => {}});} ${method}}; return Actual;`, ["React", "AddonSettingsModalLifecycle", "ErrorBoundary", "ConfirmationModal", "ModalRoot", "t"], [React, Lifecycle, Component, Component, {Sizes: {MEDIUM: "medium"}}, t]);
+    const opening = {isCurrent: () => true, release: () => {}, cancel: () => {}};
+    const identity = {id: "Legacy", type: "plugin"};
+    const rendered = Actual.showAddonSettingsModal("Name", <span>Panel</span>, identity, opening);
+    expect(rendered.type).toBe(Lifecycle); expect(rendered.props.identity).toBe(identity); expect(rendered.props.opening).toBe(opening);
+});

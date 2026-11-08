@@ -71,7 +71,7 @@ function fixBuffer(options: RequestOptions, callback: RequestCallback): RequestC
             }
         }
         catch (err) {
-            Logger.debug("BetterDiscordPreload", "Failed to convert response body to buffer", {
+            Logger.debug("Open BetterDiscord Preload", "Failed to convert response body to buffer", {
                 catchError: err,
                 options,
                 error,

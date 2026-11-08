@@ -2,6 +2,12 @@ import Events from "@modules/emitter";
 
 import type {Addon, AddonType} from "@typed/addon";
 
+export interface AddonSettingsOpening {
+    isCurrent(): boolean;
+    release(): void;
+    cancel(): void;
+}
+
 export interface AddonSettingsModalIdentity {
     id: string;
     type: AddonType;

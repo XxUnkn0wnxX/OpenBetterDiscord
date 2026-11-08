@@ -21,7 +21,7 @@ import {Filters, getBySource} from "@webpack";
 import AddonError from "@structs/addonerror";
 import AddonErrorsStore from "@stores/addonerrors";
 import SimpleMarkdownExt from "@structs/markdown";
-import {watchAddonSettingsUnload, type AddonSettingsModalIdentity} from "@utils/addonsettingsmodal";
+import {watchAddonSettingsUnload, type AddonSettingsModalIdentity, type AddonSettingsOpening} from "@utils/addonsettingsmodal";
 
 
 const queue: Array<() => void> = [];
@@ -32,13 +32,22 @@ interface ModalActions {
     closeAllModals(): void;
 }
 
-function AddonSettingsModalLifecycle({identity, onClose, children}: {identity?: AddonSettingsModalIdentity; onClose?(): void; children?: ReactNode;}) {
+function AddonSettingsModalLifecycle({identity, onClose, children, opening}: {identity?: AddonSettingsModalIdentity; onClose?(): void; children?: ReactNode; opening?: AddonSettingsOpening;}) {
+    const closed = React.useRef(false);
     React.useEffect(() => {
         if (!identity || !onClose) return;
-        return watchAddonSettingsUnload(identity, onClose);
-    }, [identity, onClose]);
+        const close = () => {
+            if (closed.current) return;
+            closed.current = true;
+            onClose();
+        };
+        const unwatch = watchAddonSettingsUnload(identity, close);
+        if (opening && !opening.isCurrent()) close();
+        opening?.release();
+        return unwatch;
+    }, [identity, onClose, opening]);
 
-    return children;
+    return opening && !opening.isCurrent() ? null : children;
 }
 
 export default class Modals {
@@ -313,7 +322,7 @@ export default class Modals {
         return child as ReactNode;
     }
 
-    static showAddonSettingsModal(name: string, panel: Element | string | (() => ReactNode) | ReactNode | ComponentType, identity?: AddonSettingsModalIdentity) {
+    static showAddonSettingsModal(name: string, panel: Element | string | (() => ReactNode) | ReactNode | ComponentType, identity?: AddonSettingsModalIdentity, opening?: AddonSettingsOpening) {
         const child = this.createAddonSettingsContent(panel);
         const options = {
             className: "bd-addon-modal",
@@ -325,7 +334,7 @@ export default class Modals {
 
         return this.openModal((props: any) => React.createElement(
             AddonSettingsModalLifecycle,
-            {identity, onClose: props.onClose},
+            {identity, onClose: props.onClose, opening},
             React.createElement(ErrorBoundary, {id: "showAddonSettingsModal", name: "Modals"}, React.createElement(ConfirmationModal, Object.assign(options, props), child as ReactElement))
         ));
     }

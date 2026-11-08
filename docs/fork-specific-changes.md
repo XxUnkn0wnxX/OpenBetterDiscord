@@ -220,6 +220,11 @@ OpenAsar handoff remain separate runtime checks after a verified release build.
 
 ## Open BetterDiscord branding and footer diagnostics
 
+The request shim's response-conversion debug label also uses Open BetterDiscord
+Preload. This is a display-label correction; request handling, token binding and
+preload/global identifiers are unchanged. Literal source paths, reserved command
+caller names and upstream URLs remain accurate diagnostic facts.
+
 Fork-owned UI labels, editor/window titles, commands, loading text, generated
 recovery/debug report headings and documentation use **Open BetterDiscord**;
 presentation abbreviations use **OBD**. Repository links use `OpenBetterDiscord`.
@@ -393,21 +398,35 @@ establish a native pass. See [Plugin API notes](plugin-api-notes.md#addon-settin
 The Addon Settings Location dropdown in Open BetterDiscord Settings offers
 **Full Page** (the upstream default) and **Floating Modal**. The normal settings
 store supplies defaults, persistence, validation and localized option labels.
-The choice is captured when a settings view opens and applies to the next
+The choice is captured when a settings request opens and applies to the next
 opening; changing it does not rebuild or move an already-open plugin panel.
 
 Both modes call the same standard provider once with its original receiver.
-Modal mode passes the raw provider result to the existing identity-aware modal
-helper, without mounting or converting it inline first. The card, Settings menu
-and public openSettings API share the same decision point, with enabled-state
-and owner/unload guards intact. No plugin API signature changes. Plugins that
+The shared route resolves the provider after the current view commits and before
+selecting a destination. Full Page keeps upstream's page presentation; Floating
+Modal passes the raw result to the existing identity-aware modal helper without
+mounting a settings page or converting the result inline first. A modal opening
+preserves the current list, Store or already-open page, including list component
+identity, search state and scroll ownership. It does not visit a temporary page
+and remount the list afterward. The card, Settings menu and public openSettings
+API share this decision point. No plugin API signature changes. Plugins that
 open their own windows retain control of those windows; this preference chooses
 the OBD wrapper rather than intercepting arbitrary plugin UI. Preserve this
 explicit user display preference in future adaptations.
 
-The fork also provides an explicit, localized Back button in addition to the
-breadcrumb. It uses the existing idempotent route-close action, returning to the
-addon list while keeping Discord Settings open.
+Each opening captures its addon and instance, with enabled-state, matching-unload
+and route-intent guards installed before evaluation. Consuming a request does not
+erase its identity; a newer request, even for the same addon, invalidates only
+pending work. Temporary guards remain until the destination installs its normal
+watcher. Page ownership also subscribes to enabled-state changes. A stale Back
+callback cannot close a newer page, and an existing page can remain behind a new
+modal after its own ownership handoff completes.
+
+The full-page title row also provides an explicit, localized Back button before
+the breadcrumb. It inherits the title's font and theme color, with an accent
+hover treatment and keyboard-focus outline. It uses the existing idempotent
+route-close action, returning to the addon list while keeping Discord Settings
+open. Floating and plugin-owned modals do not receive this control.
 
 ### Legacy settings providers without a returned panel
 
@@ -420,12 +439,15 @@ card always passed that result to the legacy modal helper; plugins may rely on
 its wrapper and Done button to complete their own modal cleanup.
 
 The compatibility path is universal and uses only the standard provider result.
-DOM, HTML, function and React panel results keep the new full-page UI, including
-valid falsy React content. A successful nullish return opens the existing
-identity-aware legacy wrapper once, then returns the full-page route to the
-addon list. The provider is evaluated once with its original instance receiver.
-The handoff rechecks the current addon object, instance and enabled state before
-opening; owner loss or matching unload cannot open a stale settings wrapper.
+DOM, HTML, function and React panel results keep the selected presentation,
+including valid falsy React content. A successful nullish return opens the
+existing identity-aware legacy wrapper once, even with Full Page selected. The
+background view stays mounted; the legacy path does not visit the full-page
+settings component. The provider is evaluated once with its original instance
+receiver. The handoff rechecks the current addon object, instance, enabled state
+and request intent before opening; owner loss or matching unload cannot open a
+stale settings wrapper. Getter, provider and modal dispatch are checked separately
+so a reentrant request cannot be erased by an older result or error.
 Missing providers, thrown provider errors and wrapper-opening failures retain
 normal settings error feedback. There are no plugin-name checks, private plugin
 methods, global modal interception or disabled-addon exceptions.
@@ -438,12 +460,17 @@ nullish-return handoff, ownership and cleanup behavior. Native retesting must
 check one legacy provider, reopening/closing it, and a normal returned panel;
 source fixtures alone do not establish the fixed client result.
 
-The follow-up passes the full local suite (**598 passed, 24 skipped, 0 failed**),
-full ESLint, root TypeScript and fresh declaration/consumer checks. Focused
-fixtures additionally prove that the same returned component mounts inline in
-page mode and does not mount inline in modal mode. Astra reviewed the universal
-fallback, mode capture, raw-result handoff and ownership/error guards. Native
-legacy-modal interaction remains a separate release-injected check.
+The preceding `2dd38638` release passed the full local suite (**598 passed,
+24 skipped, 0 failed**), full ESLint, root TypeScript and fresh
+declaration/consumer checks. The routing repair has focused route, page,
+card/menu/API, Store-navigation and unload tests, scoped ESLint and root
+TypeScript verification. Fixtures cover retained list component/DOM, controlled
+search state and scroll owner, provider shapes and receiver, reentrant requests,
+disable/replacement cycles, the destination-watcher handoff and stale Back
+callbacks. Astra reviewed the intent, ownership and cancellation ordering.
+These checks establish routing behavior; they do not establish a fix for all
+floating-panel or search lag. Native legacy-modal interaction remains a separate
+release-injected check.
 
 ## 1.14.6 controls and table settings through 033d4cb1
 

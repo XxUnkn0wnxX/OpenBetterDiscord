@@ -6,12 +6,14 @@ import Route from "../../../src/betterdiscord/stores/addonsettings";
 
 Object.assign(globalThis, {IS_REACT_ACT_ENVIRONMENT: true});
 const context = React.createContext<any>({});
-mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/addonshared.tsx"), () => ({addonContext: context}));
+mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/addonshared.tsx"), () => ({addonContext: context, addonText: (value: string) => value}));
 mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/addonlist.tsx"), () => ({"default": () => <div data-list />}));
 mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/addonstore.tsx"), () => ({"default": () => <div data-store />}));
-mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/addonsettings.tsx"), () => ({"default": ({addonId}: any) => <div data-settings={addonId} />}));
+mock.module("@stores/settings", () => ({"default": {get: () => "page"}}));
+mock.module("@ui/modals", () => ({"default": {}}));
+mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/addonsettings.tsx"), () => ({"default": ({payload}: any) => {React.useLayoutEffect(() => {payload.opening.release();}, [payload]); return <div data-settings={payload.addon.id} />;}}));
 const {default: Page} = await import("../../../src/betterdiscord/ui/settings/addonpage");
-class Manager extends Store { constructor(public prefix: "plugin" | "theme") {super();} addonList = [{id: "one"}]; }
+class Manager extends Store { constructor(public prefix: "plugin" | "theme") {super();} addonList = [{id: "one", instance: {getSettingsPanel: () => <div />}}]; isEnabled() {return true;} }
 let roots: Root[] = [];
 async function mount(prefix: "plugin" | "theme") {
     const element = document.body.appendChild(document.createElement("div"));
