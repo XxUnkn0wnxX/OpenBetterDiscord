@@ -7,6 +7,33 @@ fork additions are listed first.
 [Current fork highlights](#fork-highlights) · [Feature guides](docs/README.md) ·
 [Integration record](docs/fork-specific-changes.md)
 
+## Open BetterDiscord (1.14.6)
+
+Adapts the reviewed upstream development range `42562e12..033d4cb1`, through
+[`033d4cb1`](https://github.com/BetterDiscord/BetterDiscord/commit/033d4cb1f6bb411130fa6f6271cd360d780e9624),
+while retaining this fork's client compatibility and addon policies.
+
+### Fork highlights
+
+- Adopts full-page plugin settings, table settings, searchable/multiple dropdowns
+  and the optional `BdApi.ReactUtils.rerenderComponent` helper. Existing settings
+  ownership, matching-unload closure, search/title and editor-focus behavior remain.
+- Preserves identity-approved update selection, declared-URL tie preference,
+  provider tokens and equal enabled-state rules for every plugin and library.
+- Uses Open BetterDiscord / OBD presentation across UI, reports and documentation,
+  with the new tracked loading artwork and preserved public API/data identifiers.
+- Restores the sidebar diagnostic block for Discord's new CSS-module class shape,
+  preserving plugin/theme counts and full debug-report copy.
+- Adopts upstream's guarded native material-clearing correction. The classname
+  detector already covers upstream's second fix and retains its additional legacy
+  factory support.
+- Documents the macOS Big Sur 11.7.1 backport, Electron 35.x–37.x targets and pinned
+  Bun 1.1.20 tooling. Native acceptance remains a separate release-test gate.
+
+See the [integration record](docs/fork-specific-changes.md) and
+[optional API notes](docs/plugin-api-notes.md) for preserved contracts and
+source-versus-native verification limits.
+
 ## Open BetterDiscord (1.14.5)
 
 This Open BetterDiscord release reports version `1.14.5` after integrating the

@@ -8,46 +8,45 @@ export default {
     // https://youtu.be/BZq1eb9d0HI?si=67V2eArlF4atnGnz
     video: "https://www.youtube.com/embed/Qv1HUqqUgkg?si=67V2eArlF4atnGnz&vq=hd720p&hd=1&rel=0&showinfo=0&mute=0&loop=1&autohide=1",
     // banner: "https://i.imgur.com/wuh5yMK.png",
-    blurb: "Open BetterDiscord 1.14.5 with Rspack compatibility and this fork's older-runtime safeguards.",
+    blurb: "Open BetterDiscord 1.14.6 brings upstream settings improvements while retaining this fork's client compatibility and addon policies.",
     changes: [
         {
+            type: "added",
+            title: "Upstream Settings Improvements",
+            items: [
+                "Plugin settings now open in a full page",
+                "Plugin authors can use table settings and searchable, multiple-selection dropdowns"
+            ]
+        },
+        {
+            type: "added",
+            title: "Mounted Component Refresh",
+            items: [
+                "Adds the optional BdApi.ReactUtils.rerenderComponent helper for component patches and unpatches"
+            ]
+        },
+        {
+            type: "improved",
+            title: "Open BetterDiscord",
+            items: [
+                "Updates the fork's UI and report branding with new loading artwork",
+                "Retains custom addon updates, provider tokens and disabled-means-disabled plugin loading"
+            ]
+        },
+        {
             type: "fixed",
-            title: "Rspack Compatibility",
+            title: "Sidebar Diagnostics",
             items: [
-                "Includes upstream's fix for the new Rspack export format",
-                "Uses upstream's getter/setter fix with writable exports and getter patch/unpatch support"
+                "Restores the version and addon-count block for Discord's changed footer classes",
+                "Preserves full debug-report copy and feedback"
             ]
         },
         {
             type: "improved",
-            title: "Recovery and Modal Improvements",
+            title: "Older Client Compatibility",
             items: [
-                "Includes the previously integrated React error decoder and shared modal padding fix",
-                "Retains this fork's extra report targets, Manual report and recovery safeguards"
-            ]
-        },
-        {
-            type: "improved",
-            title: "Custom Reinjection Retained",
-            items: [
-                "Retains this fork's custom macOS reinjection, recovery, and OpenAsar handoff",
-                "Keeps the existing wrappers and recovery behavior for pinned older Discord builds"
-            ]
-        },
-        {
-            type: "improved",
-            title: "Fork Compatibility",
-            items: [
-                "Preserves editor autofocus, selection safeguards and Settings-close sequencing",
-                "Keeps Store context-menu navigation, external addon updates and disabled-plugin behavior"
-            ]
-        },
-        {
-            type: "improved",
-            title: "Updated Translations",
-            items: [
-                "Includes the previously integrated Crowdin translation refresh",
-                "Translations are maintained at https://translate.betterdiscord.app/"
+                "Keeps the macOS Big Sur backport and Electron 35.x–37.x targets",
+                "Preserves macOS recovery, OpenAsar coordination and editor-focus behavior"
             ]
         }
     ]

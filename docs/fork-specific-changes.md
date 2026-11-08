@@ -26,6 +26,42 @@ toolchain requirements.
 Integration sections retain their original evidence and revision context.
 [Documentation index](README.md) · [Project overview](../README.md)
 
+## 1.14.6 metadata and public declaration generation
+
+Release metadata reports `1.14.6`. The changelog describes the adopted settings
+and API features plus retained fork behavior; it does not import upstream's
+unverified blanket claim that everything fully works. Existing release history
+and its already-corrected older heading remain intact. Dependency versions,
+lockfile and the Bun 1.1.20 pin are unchanged.
+
+The new `AddonAPI.openSettings` runtime import reaches the Settings renderer and
+builtin implementation graph. Whole-graph declaration emission then attempts to
+publish anonymous singleton types with private members: the current graph has
+50 `TS4094` errors, while an otherwise-identical pre-page AddonAPI overlay has
+none. Those renderer imports are absent from AddonAPI's actual public declaration.
+Do not make private/protected members public to accommodate this tooling issue.
+
+The generator now checks the entire root project with `tsc --noEmit`, then uses
+the existing declaration bundler directly on the API source and its reachable
+type graph. The explicit declaration configuration, root aliases, namespace
+finalization and package assembly remain. **Adapted to support Bun 1.1.20**:
+the compiler preflight still uses its actual executable path rather than relying
+on this Bun shell to add `node_modules/.bin`. The graph correction is a TypeScript
+declaration issue, not an Electron or Bun engine defect. No diagnostic suppression
+or runtime API change is introduced.
+
+Astra verified the correction and a reachable private anonymous export still
+fails with `TS4094`. Fresh generation, including the root typecheck, passes in
+15.86 seconds. A strict fresh-package consumer with library checking enabled
+passes, covering tables/column unions, dropdown modes, both addon navigation
+methods, direct/tuple component refresh and existing settings variants. Negative
+cases reject invalid columns and public access to the internal changelog controls.
+The `BetterDiscord` namespace, `BdApi` globals and `@betterdiscord/types` identity
+remain unchanged. No unresolved repository aliases or Settings/builtin internals
+leak into the resulting package. Source-identical inputs allow this root typecheck
+to serve as the final type gate; full tests/lint and final release verification
+remain separate checks.
+
 ## 1.14.6 native material clearing and classname ancestry
 
 The reviewed `42562e12..033d4cb1` range's constructor correction uses upstream's

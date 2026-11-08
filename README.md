@@ -31,7 +31,7 @@ and user choice: people should be free to choose what they install on their own
 Discord clients, without judgment or discouragement.
 
 The Website, Docs and Translate badges link to upstream community resources.
-The Discord badge links to a community the maintainer supports; Open
+The Discord badge links to a community I support. Open
 BetterDiscord is not formally affiliated with it. This fork uses the local build
 workflow below, not upstream installer downloads.
 

@@ -5,8 +5,6 @@ import {dts} from "rollup-plugin-dts";
 import {readFile, writeFile, mkdir, copyFile, rm} from "node:fs/promises";
 import {ModuleResolutionKind} from "typescript";
 
-// Intermediate per-file declarations emitted by tsc (see declaration.tsconfig.json).
-const declarationsDir = "./dist/declarations";
 // Final publishable package directory (@betterdiscord/types).
 const outDir = "./dist/types";
 // Committed sources copied verbatim into the published package.
@@ -15,16 +13,17 @@ const packageDir = "./types";
 await buildTypes();
 
 async function buildTypes() {
-    console.log("Generating declaration files...");
+    console.log("Checking project types...");
     // Bun 1.1.20 does not add node_modules/.bin to Bun.$'s command path.
-    await $`${process.execPath} ./node_modules/typescript/bin/tsc -p ./declaration.tsconfig.json`;
+    await $`${process.execPath} ./node_modules/typescript/bin/tsc -p ./tsconfig.json --noEmit`;
 
     console.log("Bundling into index.d.ts...");
     const bundle = await rollup({
-        input: `${declarationsDir}/src/betterdiscord/api/index.d.ts`,
+        input: "./src/betterdiscord/api/index.ts",
         plugins: [dts({
+            tsconfig: "./declaration.tsconfig.json",
             compilerOptions: {
-                baseUrl: declarationsDir,
+                baseUrl: ".",
                 moduleResolution: ModuleResolutionKind.Bundler,
                 paths: tsconfig.compilerOptions.paths
             },
@@ -64,9 +63,6 @@ async function buildTypes() {
     await copyFile(`${packageDir}/package.json`, `${outDir}/package.json`);
     await copyFile(`${packageDir}/README.md`, `${outDir}/README.md`);
     await copyFile("./LICENSE.md", `${outDir}/LICENSE.md`);
-
-    // The intermediate per-file declarations are no longer needed.
-    await rm(declarationsDir, {recursive: true, force: true});
 
     console.log(`Done! Package ready in ${outDir}`);
 }
