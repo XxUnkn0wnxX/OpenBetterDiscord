@@ -1,8 +1,13 @@
 # Open BetterDiscord macOS fork
 
-[![CI Status][ci-badge]][ci-link] [![License][license-badge]][license-link] [![Website][website-badge]][website-link] [![Docs][docs-badge]][docs-link] [![Discord][discord-badge]][discord-link] [![Translate][translate-badge]][translate-link]
+<div align="center">
+<img src=".images/Open-Better-Discord-two-line.svg" alt="Open BetterDiscord wordmark" width="800">
 
-[ci-badge]: https://img.shields.io/github/actions/workflow/status/XxUnkn0wnxX/OpenBetterDiscord/ci.yml?branch=develop&logo=github&label=develop&style=for-the-badge
+</div>
+
+[![CI Status][ci-badge]][ci-link] [![License][license-badge]][license-link] [![Discord][discord-badge]][discord-link] [![Reddit][reddit-badge]][reddit-link] [![Website][website-badge]][website-link] [![Docs][docs-badge]][docs-link] [![Translate][translate-badge]][translate-link]
+
+[ci-badge]: https://img.shields.io/github/actions/workflow/status/XxUnkn0wnxX/OpenBetterDiscord/ci.yml?branch=develop&logo=github&label=Build&color=B11F1F&style=for-the-badge
 [ci-link]: https://github.com/XxUnkn0wnxX/OpenBetterDiscord/actions/workflows/ci.yml
 [license-badge]: https://img.shields.io/badge/license-Apache--2.0-3a71c1?style=for-the-badge
 [license-link]: LICENSE.md
@@ -10,8 +15,10 @@
 [website-link]: https://betterdiscord.app
 [docs-badge]: https://img.shields.io/badge/upstream-docs-3a71c1?logo=readthedocs&style=for-the-badge
 [docs-link]: https://docs.betterdiscord.app
-[discord-badge]: https://img.shields.io/badge/upstream-discord-7289da?logo=discord&logoColor=white&style=for-the-badge
-[discord-link]: https://betterdiscord.app/invite
+[discord-badge]: https://img.shields.io/badge/Discord-7289da?logo=discord&logoColor=white&style=for-the-badge
+[discord-link]: https://discord.gg/e66JbKte2P
+[reddit-badge]: https://img.shields.io/badge/Reddit-join-FF4500?logo=reddit&logoColor=white&style=for-the-badge
+[reddit-link]: https://www.reddit.com/r/OpenBetterDiscord/
 [translate-badge]: https://img.shields.io/badge/upstream-translate-3a71c1?logo=crowdin&style=for-the-badge
 [translate-link]: https://translate.betterdiscord.app
 
@@ -19,11 +26,14 @@ Open BetterDiscord is an independent backport of
 [BetterDiscord](https://github.com/BetterDiscord/BetterDiscord), targeting older
 Discord clients on **macOS Big Sur 11.7.1** and pinned Discord/Electron builds.
 Build locally from `develop`, inject into a standard macOS Discord installation,
-then open Discord normally.
+then open Discord normally. Open BetterDiscord supports freedom of expression
+and user choice: people should be free to choose what they install on their own
+Discord clients, without judgment or discouragement.
 
-The Website, Docs, Discord and Translate badges link to upstream community
-resources. This fork uses the local build workflow below, not upstream installer
-downloads.
+The Website, Docs and Translate badges link to upstream community resources.
+The Discord badge links to a community the maintainer supports; Open
+BetterDiscord is not formally affiliated with it. This fork uses the local build
+workflow below, not upstream installer downloads.
 
 ## :sparkles: How this fork differs
 

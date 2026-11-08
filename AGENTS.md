@@ -13,7 +13,7 @@
   recovery/debug report text and documentation use `Open BetterDiscord`, with
   `OBD` for presentation abbreviations. Keep the README title
   `Open BetterDiscord macOS fork` and repository identity `OpenBetterDiscord`.
-  Do not restore upstream display names or replace fork-owned loading artwork
+  Do not restore upstream display names or replace fork-owned artwork
   when taking upstream hunks. Keep stable
   API/type/global/path/protocol/ASAR identifiers and actual upstream attribution
   literal; branding is not an API or installed-data migration.

@@ -60,6 +60,14 @@ existing SVG text loader and embeds a data URL at its existing 20×20 size, with
 the same opacity animation. Its geometry fits that box. Local and GitHub builds
 use that repository asset without any scratch-directory or runtime file access.
 
+The README uses the supplied transparent two-line SVG wordmark from `.images/`;
+both supplied SVG/PNG variants are retained unchanged. Keep the existing badge
+style, correct Apache licence and dynamic Build status with the logo's red
+accent. The Discord badge uses the maintainer-supported independent community's
+invite, without implying formal affiliation; Reddit links to `r/OpenBetterDiscord`.
+The documented free-expression and user-choice stance describes project values,
+not an unimplemented change to current authentication or loading controls.
+
 Branding does not rename `BdApi`, public type namespaces, internal caller IDs,
 protocols, installed data directories, ASARs, wrapper/recovery markers or source
 identity fields. Raw plugin metadata, errors, stacks and diagnostic paths remain
