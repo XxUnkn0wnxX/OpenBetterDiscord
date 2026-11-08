@@ -4,7 +4,6 @@ import Settings, {type SettingsCollection} from "@stores/settings";
 import JsonStore from "@stores/json";
 import {Filters, getByKeys, getByStrings, getLazy, getBySource, getModule} from "@webpack";
 import Patcher from "@modules/patcher";
-import DOMManager from "@modules/dommanager";
 
 import AddonPage from "@ui/settings/addonpage";
 
@@ -23,6 +22,7 @@ import Button from "./base/button";
 import {HistoryIcon} from "lucide-react";
 import {t} from "@common/i18n";
 import Modals from "./modals";
+import AddonSettingsRoute from "@stores/addonsettings";
 import changelog from "@data/changelog";
 import {type Plugin} from "@modules/pluginmanager";
 import type AddonManager from "@modules/addonmanager";
@@ -834,7 +834,8 @@ function useAddonMenu(manager: AddonManager) {
                 const hasSettings = (addon as Plugin).instance && typeof ((addon as Plugin).instance.getSettingsPanel) === "function";
 
                 if (hasSettings) {
-                    Modals.showAddonSettingsModal(name, (addon as Plugin).instance.getSettingsPanel!(), {id: addon!.id, type: manager.prefix});
+                    AddonSettingsRoute.open(manager.prefix, addon!.id);
+                    openCategory(manager.prefix + "s");
                 }
                 else {
                     toasts.warning(t("Addons.noSettings", {name}));
@@ -853,9 +854,8 @@ function useAddonMenu(manager: AddonManager) {
                     label={t("Addons.openStore", {context: manager.prefix})}
                     id={`${manager.prefix}-store`}
                     action={() => {
+                        AddonSettingsRoute.openStore(manager.prefix);
                         openCategory(manager.prefix + "s");
-                        // If the addon store instantly opens have it just stop basically
-                        DOMManager.onAdded(":where(.bd-store-card, .bd-addon-title > :nth-child(3))", (elem) => (elem as HTMLElement)?.click());
                     }}
                 />
             </ContextMenu.Group>

@@ -270,8 +270,7 @@ export default class Modals {
         }
     }
 
-    static showAddonSettingsModal(name: string, panel: Element | string | (() => ReactNode) | ReactNode | ComponentType, identity?: AddonSettingsModalIdentity) {
-
+    static createAddonSettingsContent(panel: Element | string | (() => ReactNode) | ReactNode | ComponentType): ReactNode {
         let child = panel;
         if (panel instanceof Node || typeof (panel) === "string") {
             child = class ReactWrapper extends React.Component<any, {hasError: boolean;}> {
@@ -304,6 +303,11 @@ export default class Modals {
         }
         if (typeof (child) === "function") child = React.createElement(child);
 
+        return child as ReactNode;
+    }
+
+    static showAddonSettingsModal(name: string, panel: Element | string | (() => ReactNode) | ReactNode | ComponentType, identity?: AddonSettingsModalIdentity) {
+        const child = this.createAddonSettingsContent(panel);
         const options = {
             className: "bd-addon-modal",
             size: ModalRoot.Sizes.MEDIUM,

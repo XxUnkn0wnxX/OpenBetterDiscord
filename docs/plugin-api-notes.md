@@ -4,7 +4,7 @@ Optional APIs that can simplify plugin code, documented separately from the
 fork's implementation contracts. Availability below is verified against this
 checkout, not inferred from a version number.
 
-**On this page:** [Tables and dropdowns](#table-settings-and-dropdown-inputs) · [Typed `getById`](#typed-bdapiwebpackgetbyid) · [`byDestructure`](#bdapiwebpackfiltersbydestructure) · [`loadEntry`](#bdapiutilsloadentry) · [Maintaining these notes](#keeping-these-notes-current)
+**On this page:** [Addon settings](#addon-settings-navigation) · [Tables and dropdowns](#table-settings-and-dropdown-inputs) · [Typed `getById`](#typed-bdapiwebpackgetbyid) · [`byDestructure`](#bdapiwebpackfiltersbydestructure) · [`loadEntry`](#bdapiutilsloadentry) · [Maintaining these notes](#keeping-these-notes-current)
 
 | API | Availability in this checkout | What it is for |
 | --- | --- | --- |
@@ -13,6 +13,38 @@ checkout, not inferred from a version number.
 | `BdApi.Webpack.getById<T>()` | Generic typing adopted from upstream 1.14.4; the existing runtime method is unchanged. | Describe the expected result of an ID lookup in TypeScript. |
 | `BdApi.Components.TableInput` and `buildSettingsPanel` table settings | Added on `develop` during the 1.14.6 adaptation. Focused source tests pass; native audit is pending after the final release build. | Edit an array of row objects with typed columns and row operations. |
 | `BdApi.Components.DropdownInput` search and multiple modes | Adopted with 1.14.6 table support; existing single-value mode remains supported. Native positioning and interaction checks are pending. | Filter choices and select multiple values. |
+| `BdApi.Plugins.openSettings` / `BdApi.Themes.openSettings` | Added during the 1.14.6 full-page settings adaptation. Focused source checks cover enabled-state and routing; native audit is pending. | Navigate to an enabled addon's existing settings panel. |
+
+## Addon settings navigation
+
+Use the manager's `openSettings(idOrFile)` method with an installed addon's name,
+ID or filename. Keep the method's receiver:
+
+```js
+if (typeof BdApi.Plugins.openSettings === "function") {
+    const opened = BdApi.Plugins.openSettings("ExamplePlugin");
+    if (!opened) console.log("No enabled settings panel is available.");
+}
+```
+
+It returns `true` after queuing the settings route and opening the category, or
+`false` when the addon is missing, disabled or has no callable `getSettingsPanel`
+on its current instance. Disabled and panel-less addons also show the upstream
+warning. It does not enable, start or evaluate an addon to obtain a panel. The
+same method exists on `BdApi.Themes`; themes without a settings provider return
+`false`. Panel construction happens when the page renders, so `true` does not
+guarantee that the provider later returns valid content.
+
+Existing DOM, string, function and React panel results remain supported, and the
+provider retains its instance receiver. Matching unload or loss of the opened
+instance exits the page without evaluating its replacement. The fork's modal
+unload protection, controlled search/title behavior and detached-editor focus
+contracts remain internal adaptations; plugins need no alternate public API.
+
+Focused fixtures cover API guards, route subscriptions, panel content and owned
+unload. The final-release audit on a supported older client must still exercise
+real Settings-menu/card/API navigation, panel interaction, unload/reload, and the
+existing search/title/editor paths. Those native checks remain pending.
 
 ## Table settings and dropdown inputs
 

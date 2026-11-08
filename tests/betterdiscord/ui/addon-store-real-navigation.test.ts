@@ -1,0 +1,7 @@
+import {expect, test} from "bun:test";
+import path from "node:path";
+test("isolated real Store navigation and settings opener", () => {
+    const result = Bun.spawnSync({cmd: [process.execPath, "test", path.join(import.meta.dir, "addon-store-real-navigation-harness.tsx")], cwd: path.join(import.meta.dir, "../../.."), stdout: "pipe", stderr: "pipe"});
+    const output = [result.stdout, result.stderr].map(value => new TextDecoder().decode(value)).join("\n");
+    expect(result.exitCode, output).toBe(0);
+});

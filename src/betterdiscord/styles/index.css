@@ -5,6 +5,7 @@
 @import "./builtins/customcss.css";
 @import "./ui/addonlist.css";
 @import "./ui/addonstore.css";
+@import "./ui/addonsettings.css";
 @import "./ui/bdsettings.css";
 @import "./ui/changelog.css";
 @import "./ui/checkbox.css";

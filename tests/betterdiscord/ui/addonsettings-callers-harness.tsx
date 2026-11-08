@@ -7,6 +7,7 @@ import Events from "../../../src/betterdiscord/modules/emitter";
 import {useStateFromStores} from "../../../src/betterdiscord/ui/hooks";
 import {watchAddonSettingsUnload, type AddonSettingsModalIdentity} from "../../../src/betterdiscord/utils/addonsettingsmodal";
 import type {Addon} from "@typed/addon";
+import AddonSettingsRoute from "../../../src/betterdiscord/stores/addonsettings";
 
 Object.assign(globalThis, {IS_REACT_ACT_ENVIRONMENT: true});
 const roots: Root[] = [];
@@ -43,6 +44,7 @@ mock.module("@modules/discordmodules", () => ({"default": {
     Tooltip: ({children}: {children: (props: object) => React.ReactNode}) => children({}), Dispatcher: {dispatch: () => {}}
 }}));
 mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/components/switch"), () => ({"default": () => null}));
+mock.module(import.meta.resolve("../../../src/betterdiscord/ui/settings/addonshared.tsx"), () => ({addonText: (value: string) => value, authorByline: (value: React.ReactNode) => value}));
 const {default: AddonCard} = await import("../../../src/betterdiscord/ui/settings/addoncard");
 
 const ContextMenu = {
@@ -52,7 +54,7 @@ const ContextMenu = {
 };
 const settingsSource = readFileSync(new URL("../../../src/betterdiscord/ui/settings.tsx", import.meta.url), "utf8");
 const menuSource = settingsSource.slice(settingsSource.indexOf("function useAddonMenu("), settingsSource.indexOf("export default SettingsRenderer;"));
-const useAddonMenu = compile(`${menuSource}\nreturn useAddonMenu;`, ["React", "useStateFromStores", "ContextMenu", "toasts", "t", "Modals", "openCategory"], [React, useStateFromStores, ContextMenu, toasts, t, Modals, () => {}]);
+const useAddonMenu = compile(`${menuSource}\nreturn useAddonMenu;`, ["React", "useStateFromStores", "ContextMenu", "toasts", "t", "AddonSettingsRoute", "openCategory"], [React, useStateFromStores, ContextMenu, toasts, t, AddonSettingsRoute, () => {}]);
 
 function addon(id: string): Addon {
     return {id, name: "Header Name", filename: `${id}.plugin.js`, author: "Author", description: "Description", version: "1.0.0", added: 1, modified: 1, size: 1, slug: id, format: "jsdoc"};
@@ -92,48 +94,25 @@ async function unload(identity: AddonSettingsModalIdentity, record = opened.at(-
     expect(record.closes).toBe(1);
 }
 
-test("Settings shift action calls the instance receiver and passes addon ID/type to real unload lifecycle", async () => {
-    const panel = <span>Panel</span>;
-    const instance = {panel, calls: 0, getSettingsPanel() {expect(this).toBe(instance); this.calls++; return this.panel;}};
+test("Settings shift and card route to settings without evaluating panels", async () => {
+    const instance = {calls: 0, getSettingsPanel() {this.calls++; return <span>Panel</span>;}};
     const manager = new MenuManager();
     manager.addonList = [{...addon("MenuID"), instance}];
     function Menu() {return useAddonMenu(manager);}
     await act(async () => root.render(<Menu />));
-    await act(async () => container.querySelector("button")!.dispatchEvent(new MouseEvent("click", {bubbles: true})));
-    expect(manager.toggles).toBe(1);
-    expect(opened).toHaveLength(0);
     await act(async () => container.querySelector("button")!.dispatchEvent(new MouseEvent("click", {bubbles: true, shiftKey: true})));
-    expect(instance.calls).toBe(1);
-    expect(opened[0].name).toBe("Header Name");
-    expect(opened[0].panel).toBe(panel);
-    expect(opened[0].identity).toEqual({id: "MenuID", type: "plugin"});
-    await unload(opened[0].identity);
+    expect(AddonSettingsRoute.id).toBe("MenuID");
+    expect(instance.calls).toBe(0);
     manager.enabled = false;
     await act(async () => manager.emitChange());
     await act(async () => container.querySelector("button")!.dispatchEvent(new MouseEvent("click", {bubbles: true, shiftKey: true})));
-    expect(opened).toHaveLength(1);
     expect(warnings).toEqual(["Addons.isDisabled"]);
+    await act(async () => root.render(<AddonCard addon={addon("Card")} type="plugin" enabled hasSettings onChange={() => {}} editAddon={() => {}} deleteAddon={() => {}} store={undefined as any} />));
+    await act(async () => container.querySelector<HTMLButtonElement>("button[aria-label='Addons.addonSettings']")!.click());
+    expect(AddonSettingsRoute.id).toBe("Card");
 });
 
-test("AddonCard callback refreshes for ID/type changes and keeps unload/manual-close ownership", async () => {
-    const panel = <span>Card Panel</span>;
-    const getSettingsPanel = () => panel;
-    const renderCard = (id: string, type: "plugin" | "theme", enabled = true) => root.render(<AddonCard addon={addon(id)} type={type} enabled={enabled} hasSettings getSettingsPanel={getSettingsPanel} onChange={() => {}} editAddon={() => {}} deleteAddon={() => {}} store={undefined as any} />);
-    for (const [id, type] of [["CardA", "plugin"], ["CardB", "plugin"], ["CardB", "theme"]] as const) {
-        await act(async () => renderCard(id, type));
-        await act(async () => container.querySelector<HTMLButtonElement>("button[aria-label='Addons.addonSettings']")!.click());
-        const record = opened.at(-1)!;
-        expect(record.identity).toEqual({id, type});
-        expect(record.panel).toBe(panel);
-        await unload(record.identity, record);
-    }
-    await act(async () => renderCard("CardB", "theme", false));
-    await act(async () => container.querySelector<HTMLButtonElement>("button[aria-label='Addons.addonSettings']")!.click());
-    expect(opened).toHaveLength(3);
-    await act(async () => renderCard("CardB", "theme"));
-    await act(async () => container.querySelector<HTMLButtonElement>("button[aria-label='Addons.addonSettings']")!.click());
-    const manual = opened.at(-1)!;
-    await act(async () => manual.root.unmount());
-    await act(async () => Events.emit("theme-unloaded", {id: "CardB"}));
-    expect(manual.closes).toBe(0);
+test("legacy modal retains matching unload lifecycle", async () => {
+    await act(async () => Modals.showAddonSettingsModal("Name", <span>Panel</span>, {id: "Legacy", type: "plugin"}));
+    await unload({id: "Legacy", type: "plugin"});
 });

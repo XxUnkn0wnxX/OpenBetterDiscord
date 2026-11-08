@@ -26,6 +26,48 @@ toolchain requirements.
 Integration sections retain their original evidence and revision context.
 [Documentation index](README.md) · [Project overview](../README.md)
 
+## 1.14.6 full-page addon settings through 033d4cb1
+
+The next group in the reviewed `42562e12..033d4cb1` range adopts upstream's
+full-page addon settings, route store, card and Settings-menu entry points, and
+`BdApi.Plugins.openSettings` / `BdApi.Themes.openSettings`. The page keeps the
+upstream panel content contract: DOM elements, strings, functions and React
+content. `getSettingsPanel` is called with the existing plugin instance as its
+receiver. The API resolves an installed addon and checks its enabled state and
+existing panel provider before navigating; it does not enable or evaluate a
+disabled addon. BDFDB, ZeresPluginLibrary and ordinary plugins obey the same rule.
+
+The previous modal's matching-unload protection remains required under the new
+page lifecycle. A page captures the addon and instance it opened, compares that
+owner with fresh manager snapshots, and closes once on owner loss or matching
+unload. This handles the manager's Store notification preceding its unload event:
+a replacement instance cannot provide a panel or silently reopen the old route.
+Unrelated IDs and the other addon type do not close it. Route closure invokes no
+addon modal confirmation/save callback. The identity-aware legacy modal helper
+remains for existing internal callers, sharing the same content conversion.
+
+Store shortcuts now queue a route before opening the category. The previous DOM
+observer/click workaround is retired because the subscribed route handles both
+an already mounted category and a delayed mount. Keep combined-first
+`UserSettings` discovery with the opener-only fallback, method receiver and
+close-before-open order. Preserve normal Store entry/back and initially empty
+Store behavior. Controlled search values and stable keys, layout-effect title
+publication, title-store subscriptions, detached-editor callback ownership and
+one-shot focus behavior remain required. Updater policy, token controls and
+disabled-plugin loading rules are unchanged.
+
+Astra's source review confirmed the ownership and panel paths and identified two
+corrections: restore the new stylesheet import to the existing import block, and
+retain the real menu/discovery/navigation checks alongside the new route-store
+subscription tests. Both are corrected. Parent verification passes 13 tests with
+37 outer assertions across eight affected files in 4.42 seconds, including title,
+unload-watcher and detached-editor checks; isolated fixtures retain their nested
+assertions. Scoped ESLint and repository TypeScript pass, and both affected
+stylesheets have zero configured stylelint findings. The page adds no speculative
+Electron version branch. Its native layout, real panel interaction and older-client navigation
+audit remain pending after final release verification; source fixtures do not
+establish a native pass. See [Plugin API notes](plugin-api-notes.md#addon-settings-navigation).
+
 ## 1.14.6 controls and table settings through 033d4cb1
 
 The reviewed range is `42562e12..033d4cb1`, pinned to
@@ -33,8 +75,8 @@ The reviewed range is `42562e12..033d4cb1`, pinned to
 final upstream table schema/control, public `TableInput` export, builder
 documentation, searchable/multiselect dropdowns, accessibility props, English
 strings and table/settings styles, including the merged option alignment and
-explicit popover anchor behavior. It does not yet complete the full-page addon
-settings or final ancestry/release steps for this range.
+explicit popover anchor behavior. At that group's checkpoint, the full-page addon
+settings and final ancestry/release steps for this range were still pending.
 
 **Adapted to support Electron 35.x–37.x** clients when Discord's React requires
 explicit `SettingsContext.Provider`. The Table uses that existing provider form.
