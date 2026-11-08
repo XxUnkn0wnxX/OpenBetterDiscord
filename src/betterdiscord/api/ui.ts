@@ -285,6 +285,14 @@ class UI {
      * However, this API allows one additional setting "type" called `category`. This has the same properties
      * as the Group React Component found under the `Components` API.
      *
+     * A `table` setting stores an array of row objects. `columns` maps field ids to column definitions of
+     * type `string`, `array`, `boolean`, `switch`, `dropdown`, or `multiselect`. Dropdown options use
+     * `{label, value}` objects; multiselect cells store arrays of selected values. Dropdown and multiselect
+     * columns may set `search: true`; options may include an HTTPS image `icon`. Array cells render as chips
+     * and support `placeholder`, `placeholderFilled`, and `validate`. `enableWith` names another column in
+     * the same row, and `default` supplies a cell value when a row is added. Rows can be added, duplicated,
+     * removed, and reordered. `addLabel` and `itemName` customize the footer.
+     *
      * `onChange` will always be given 3 arguments: category id, setting id, and setting value. In the case
      * that you have settings on the "root" of the panel, the category id is `null`. Any `onChange`
      * listeners attached to individual settings will fire before the panel-level change listener.

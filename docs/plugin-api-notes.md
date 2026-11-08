@@ -4,13 +4,62 @@ Optional APIs that can simplify plugin code, documented separately from the
 fork's implementation contracts. Availability below is verified against this
 checkout, not inferred from a version number.
 
-**On this page:** [Typed `getById`](#typed-bdapiwebpackgetbyid) · [`byDestructure`](#bdapiwebpackfiltersbydestructure) · [`loadEntry`](#bdapiutilsloadentry) · [Maintaining these notes](#keeping-these-notes-current)
+**On this page:** [Tables and dropdowns](#table-settings-and-dropdown-inputs) · [Typed `getById`](#typed-bdapiwebpackgetbyid) · [`byDestructure`](#bdapiwebpackfiltersbydestructure) · [`loadEntry`](#bdapiutilsloadentry) · [Maintaining these notes](#keeping-these-notes-current)
 
 | API | Availability in this checkout | What it is for |
 | --- | --- | --- |
 | `BdApi.Utils.loadEntry` | Present on `develop`; this fork includes an internal compatibility fallback for older runtimes. | Load entry modules referenced by a discovered lazy Webpack loader. |
 | `BdApi.Webpack.Filters.byDestructure` | Present on `develop` from the 1.14.3 adaptation; live audit passed on Stable with Electron 37.6.0. | Find exported functions whose source contains a matching destructuring assignment. |
 | `BdApi.Webpack.getById<T>()` | Generic typing adopted from upstream 1.14.4; the existing runtime method is unchanged. | Describe the expected result of an ID lookup in TypeScript. |
+| `BdApi.Components.TableInput` and `buildSettingsPanel` table settings | Added on `develop` during the 1.14.6 adaptation. Focused source tests pass; native audit is pending after the final release build. | Edit an array of row objects with typed columns and row operations. |
+| `BdApi.Components.DropdownInput` search and multiple modes | Adopted with 1.14.6 table support; existing single-value mode remains supported. Native positioning and interaction checks are pending. | Filter choices and select multiple values. |
+
+## Table settings and dropdown inputs
+
+`BdApi.UI.buildSettingsPanel` accepts a `table` setting with an array of row
+objects and `columns`, supplied as an ID-keyed object or an ordered array of
+column definitions with IDs:
+
+```js
+const panel = BdApi.UI.buildSettingsPanel({
+    settings: [{
+        type: "table",
+        id: "rules",
+        name: "Rules",
+        value: [{enabled: true, label: "Example"}],
+        columns: {
+            enabled: {type: "switch", label: "Enabled", default: true},
+            label: {type: "string", label: "Label", enableWith: "enabled"}
+        }
+    }],
+    onChange: (_category, settingId, rows) => {
+        // Persist rows through the plugin's own settings/data path.
+        console.log(settingId, rows);
+    }
+});
+// Return panel from the plugin's getSettingsPanel().
+```
+
+Column types are `string`, `array`, `boolean`, `switch`, `dropdown` and
+`multiselect`. A column's `enableWith` refers to another boolean field in the
+same row. Dropdown options use `{label, value}`, with optional HTTPS icons and
+`search: true`; multiselect cells store arrays of selected values. Users can
+add, duplicate, delete and reorder rows. A change reports the new row array;
+individual-setting callbacks still run before the panel callback, once each.
+
+For a standalone control, use `BdApi.Components.TableInput` with `columns` and
+either controlled `value` or an initial `defaultValue`, plus `onChange`.
+`DropdownInput` also accepts `multiple` and `search`; single-value changes stay
+scalar, while multiple mode returns an array in option order. These are upstream
+contracts; no fork-only alternate API or plugin migration is introduced.
+
+The fork uses explicit React context providers for its Electron 35.x–37.x
+compatibility target and preserves provider/local disabled handling. Focused
+fixtures cover row operations, dependencies, callback order, multiple selection
+and options arriving after an empty list. Those fixtures do not prove native
+popover positioning, dragging or operation on every supported client. The
+final-release older-client audit remains pending; handle availability when
+supporting BetterDiscord versions without these optional additions.
 
 ## Typed `BdApi.Webpack.getById`
 

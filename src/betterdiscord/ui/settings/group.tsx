@@ -13,6 +13,7 @@ import ColorPicker from "./components/color";
 import Filepicker from "./components/file";
 import Button, {type ButtonProps} from "../base/button";
 import Position from "@ui/settings/components/position";
+import Table from "@ui/settings/components/table";
 import {SettingsContext} from "@ui/contexts";
 import {useStateFromStores} from "@ui/hooks";
 import SettingsStore from "@stores/settings";
@@ -21,7 +22,7 @@ import ProviderToken from "./components/providertoken";
 
 const {useCallback} = React;
 
-const CONTEXT_CONSUMING_SETTING_TYPES = ["switch", "dropdown", "slider", "color", "text", "position", "radio", "keybind", "number"] as const;
+const CONTEXT_CONSUMING_SETTING_TYPES = ["switch", "dropdown", "slider", "color", "text", "position", "radio", "keybind", "number", "table"] as const;
 type ContextConsumingSettingType = (typeof CONTEXT_CONSUMING_SETTING_TYPES)[number];
 const CONTEXT_CONSUMING_SETTING_TYPE_SET = new Set<ContextConsumingSettingType>(CONTEXT_CONSUMING_SETTING_TYPES);
 
@@ -126,11 +127,12 @@ export function buildSetting(setting: Setting | CustomSetting | ButtonSetting) {
     if ($setting.type === "color") children = <ColorPicker {...$setting} />;
     if ($setting.type === "button") children = <Button {...$setting} />;
     if ($setting.type === "position") children = <Position {...$setting} />;
+    if ($setting.type === "table") children = <Table {...$setting} />;
     if ($setting.type === "custom") children = $setting.children;
     if (!children) return null;
     return <Item
         id={$setting.id}
-        inline={$setting.hasOwnProperty("inline") ? $setting.inline : $setting.type !== "radio"}
+        inline={$setting.hasOwnProperty("inline") ? $setting.inline : $setting.type !== "radio" && $setting.type !== "table"}
         key={$setting.id}
         name={$setting.name}
         note={$setting.note}>

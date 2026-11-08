@@ -4,7 +4,6 @@ import Flex from "@ui/base/flex";
 import {CheckIcon} from "lucide-react";
 import {useItemProps, type BaseSettingProps} from "./utils";
 
-
 interface CheckboxPropsBase {
     className?: string,
     inputClassName?: string,
@@ -13,7 +12,10 @@ interface CheckboxPropsBase {
     label?: React.ReactNode,
     labelClassName?: string,
     disabled?: boolean,
-    reverse?: boolean;
+    reverse?: boolean,
+    ariaLabel?: string;
+    grow?: number;
+    shrink?: number;
 }
 
 export type CheckboxProps = CheckboxPropsBase & BaseSettingProps<boolean>;
@@ -25,15 +27,18 @@ export default function CheckBox(props: CheckboxProps) {
         <Flex
             className={clsx("bd-checkbox", props.className, {"bd-checkbox-disabled": disabled, "bd-checkbox-has-label": props.label, "bd-checkbox-reverse": props.reverse})}
             align={Flex.Align.CENTER}
+            grow={props.grow}
+            shrink={props.shrink}
             direction={props.reverse ? Flex.Direction.HORIZONTAL_REVERSE : Flex.Direction.HORIZONTAL}
             onClick={toggle}
         >
             <input
                 type="checkbox"
                 checked={state}
+                id={props.id}
                 readOnly
                 disabled={disabled}
-                id={props.id}
+                aria-label={props.ariaLabel}
                 className={clsx("bd-checkbox-input", props.inputClassName)}
             />
             <div className={clsx("bd-checkbox-box", props.iconClassName)}>

@@ -1,10 +1,10 @@
 import React from "react";
-import clsx from "clsx";
 import {useItemProps, type BaseSettingProps} from "./utils";
-
+import clsx from "clsx";
 
 interface SwitchPropsBase {
     id?: string;
+    ariaLabel?: string;
 }
 
 export type SwitchProps = SwitchPropsBase & BaseSettingProps<boolean>;
@@ -13,11 +13,14 @@ export default function Switch(props: SwitchProps) {
     const {state, setState: toggle, disabled} = useItemProps<boolean, unknown>(props, (_, bool) => !bool);
 
     return (
-        <div className={clsx("bd-switch", {
-            "bd-switch-disabled": disabled,
-            "bd-switch-checked": state
-        })}>
-            <input id={props.id} type="checkbox" disabled={disabled} checked={state} onChange={toggle} />
+        <div
+            className={clsx("bd-switch", {
+                "bd-switch-disabled": disabled,
+                "bd-switch-checked": state
+            })}
+        >
+            <input id={props.id} type="checkbox" aria-label={props.ariaLabel} disabled={disabled} checked={state} onChange={toggle} />
+
             <div className="bd-switch-body">
                 <svg className="bd-switch-slider" viewBox="0 0 28 20" preserveAspectRatio="xMinYMid meet">
                     <rect className="bd-switch-handle" fill="white" x="4" y="0" height="20" width="20" rx="10"></rect>

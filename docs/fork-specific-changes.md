@@ -26,6 +26,83 @@ toolchain requirements.
 Integration sections retain their original evidence and revision context.
 [Documentation index](README.md) · [Project overview](../README.md)
 
+## 1.14.6 controls and table settings through 033d4cb1
+
+The reviewed range is `42562e12..033d4cb1`, pinned to
+`033d4cb1f6bb411130fa6f6271cd360d780e9624`. This first source group adopts the
+final upstream table schema/control, public `TableInput` export, builder
+documentation, searchable/multiselect dropdowns, accessibility props, English
+strings and table/settings styles, including the merged option alignment and
+explicit popover anchor behavior. It does not yet complete the full-page addon
+settings or final ancestry/release steps for this range.
+
+**Adapted to support Electron 35.x–37.x** clients when Discord's React requires
+explicit `SettingsContext.Provider`. The Table uses that existing provider form.
+The collection-backed Group recognizes Table as a context consumer, so its
+redundant disabled snapshot cannot override a fresh Store update. Preserve the
+generic provider/local disabled OR behavior, controlled/uncontrolled inputs,
+setting-before-panel callback order and checkbox `readOnly`. Provider-token
+settings/rendering and addon update notifications remain present. The actual
+updater, token-provider and plugin-manager implementations are unchanged.
+
+Two narrow upstream reliability corrections preserve its intended contracts:
+
+- The private popover hook now observes whether its controls are rendered.
+  With initially empty options, upstream's first effect sees null refs and does
+  not rerun when choices arrive. A real component regression reproduced that
+  missing attachment; the active dependency now attaches on empty-to-populated
+  transition and disconnects on removal without recreating the observer on every
+  render. Retire this correction when upstream handles that lifecycle.
+- `Setting` applies the upstream default-value override separately to each union
+  member. Upstream's whole-union `Omit` rejects a fresh table's `columns` and
+  loses other control-specific fields. A source-derived TypeScript consumer
+  reproduced `TS2353`; the private distributive helper retains `columns`,
+  `options` and number bounds without a runtime change or new public API.
+  Retire it when upstream preserves those declared setting variants.
+
+These two corrections concern React lifecycle and TypeScript declarations,
+respectively; they are not asserted to be Electron-version defects. Existing
+control/input and callback safeguards remain required, not superseded by the
+new table. Optional API examples and pending native checks are in
+[Plugin API notes](plugin-api-notes.md#table-settings-and-dropdown-inputs).
+
+Focused review identified the public type regression and required real
+Group-to-Table state evidence. The populated fixture includes a stale
+`disabled: true` setting snapshot, observes disabled-to-enabled Store updates
+without remounting, then checks setting-before-panel callbacks and persisted row
+state. Both findings are resolved in the source checks. Combined affected
+verification passes 22 tests with 64 outer assertions in 4.51 seconds, with
+isolated table/group/choice harnesses preserving their nested assertions.
+Repository TypeScript passes. **Adapted to support Bun 1.1.20** test isolation:
+the choice-controls fixture now owns its renderer/module setup in a subprocess,
+and checks the actual selected label separately from upstream's hidden sizing
+text. Modern upstream CSS produces configured stylelint findings; this is not a
+global CSS-lint-clean claim. The full suite and final release build remain at
+the final integration checkpoint, followed by user-owned native testing.
+
+## Compatibility targets for internal adaptations
+
+The maintained client target is **Electron 35.x–37.x** on older macOS; current
+pinned Stable/PTB/Canary host versions are listed in the [project overview](../README.md).
+Build and test tooling remains pinned to **Bun 1.1.20**. These are compatibility
+targets. Native evidence below remains specific to the client and feature
+actually tested; it does not establish a pass on every intermediate release.
+
+| Internal adaptation | Explicit target and purpose | Replacement boundary |
+| --- | --- | --- |
+| `BdApi.Utils.loadEntry` content cache | **Adapted to support Electron 35.x–37.x** when `Map.prototype.getOrInsertComputed` is absent. A private capability-based fallback preserves the upstream result, call, rejection and cache contract. | Retire when upstream supplies equivalent missing-method handling or all supported clients provide the method. |
+| Settings context providers | **Adapted to support Electron 35.x–37.x** clients whose Discord-provided React needs explicit `SettingsContext.Provider`. This follows a React capability, not an Electron version branch. | Reassess when every supported client accepts the upstream provider form; preserve disabled-state and callback contracts. |
+| Notification entry identity | **Adapted to support Electron 35.x–37.x** without requiring `WeakMap#getOrInsertComputed`. Private entries preserve same-ID reuse, anonymous independence and exact-entry close behavior. The separate slice/spread removal path is portability plumbing, not evidence that `Array#toSpliced` is missing throughout this range. | Replace only with an upstream equivalent preserving both public behavior and supported runtime capabilities. |
+| Recovery attribution iteration | **Adapted to support Bun 1.1.20**, where the directly probed iterator `take`/`toArray` helpers are unavailable. An ordered loop preserves the first resolvable owner. | Reassess against the supported toolchain and actual client capabilities; do not infer an Electron defect from the Bun probe. |
+| Declaration-tool command resolution | **Adapted to support Bun 1.1.20**: the type-generation script invokes the installed TypeScript executable directly because this Bun shell does not add `node_modules/.bin` to its command path. | Reassess when the deliberately selected Bun toolchain provides equivalent command resolution. |
+| Local test runtime | **Adapted to support Bun 1.1.20 on Darwin 20** with the existing exact Intl guard and subprocess isolation for process-global module mocks. These are test-only adaptations. | Keep newer runtimes on their full native assertions; remove workarounds only after their triggering toolchain limitations are gone. |
+
+Other guards for throwing module getters, Discord bundle shapes, addon ownership,
+native OS support and missing private exports remain tied to their documented
+trigger. They must not be relabeled as Electron version defects without evidence.
+New or revised compatibility entries must state their runtime target, capability
+gap, evidence and retirement criteria in the same way.
+
 ## Context-menu discovery after Rspack value exports
 
 Discord's `web.72656029554c0370.js` emits the menu marker components as
@@ -835,6 +912,8 @@ skips, full ESLint and TypeScript on Bun 1.1.20. Native attribution and a new
 publication remain separate gates from this source integration.
 
 ### Bun and older-runtime compatibility adaptation
+
+**Adapted to support Bun 1.1.20.**
 
 Upstream selects the first suspect with `plugins.values().take(1).toArray()`.
 Both iterator helpers are **unavailable in pinned Bun 1.1.20**, as confirmed
@@ -2215,7 +2294,8 @@ bytes were unchanged.
   effective disabled state is the provider-disabled state OR the local
   disabled prop, and either state blocks callbacks and input changes. Keep the
   explicit `<SettingsContext.Provider>`; do not replace it with the React 19
-  provider shorthand.
+  provider shorthand. **Adapted to support Electron 35.x–37.x** clients when
+  their Discord-provided React requires the explicit provider form.
 - Number controls reject empty, invalid, and non-finite input without emitting
   `NaN`, and their decrement/increment buttons honor `min` and `max`.
 - Color controls use an explicit `defaultColor` as the reset target, including
@@ -2988,7 +3068,8 @@ work:
 - [`d265a8fa`](https://github.com/XxUnkn0wnxX/BetterDiscord/commit/d265a8fa1bf6fcb4b620e785390eee61418157a4): copied addon debug rows include
   each addon's version and append `(Enabled)` only when that addon is enabled.
 
-Stage 5 adopts upstream
+**Adapted to support Electron 35.x–37.x** when the native computed-insert Map
+helper is unavailable. Stage 5 adopts upstream
 [`8e3078b4`](https://github.com/BetterDiscord/BetterDiscord/commit/8e3078b4e4f3e2fcf5b0b4644bd86c5e15e71333)
 `BdApi.Utils.loadEntry` behavior. Its private content cache uses the native
 `Map.prototype.getOrInsertComputed` when that method exists and an equivalent

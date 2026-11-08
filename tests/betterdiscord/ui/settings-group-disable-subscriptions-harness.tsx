@@ -16,7 +16,8 @@ const storeListeners = new Set<StoreListener>();
 const storeState = {
     disabled: true,
     providerDisabled: false,
-    providerToken: "gh-dummy-token-123456"
+    providerToken: "gh-dummy-token-123456",
+    tableRows: [{enabled: false}]
 };
 type ValidationResult = {status: "valid"} | {status: "invalid"} | {status: "unavailable"; reason: "permission" | "rate-limit" | "network" | "response"; missingPermission?: "read:user" | "read:repository" | "user-read"};
 type PendingValidation = {provider: string; candidate: string; signal: AbortSignal; resolve(result: ValidationResult): void;};
@@ -62,11 +63,13 @@ mock.module("@stores/settings", () => ({
         },
         get: (_collection: string, _category: string, id: string) => {
             if (id === "dependent-toggle") return false;
+            if (id === "rules") return storeState.tableRows;
             if (id === "github" || id === "gitlab" || id === "slowbro") return storeState.providerToken;
             return undefined;
         },
         getSetting: (_collection: string, _category: string, id?: string) => {
             if (id === "dependent-toggle") return {disabled: storeState.disabled};
+            if (id === "rules") return {disabled: storeState.disabled};
             if (id === "github") return {disabled: storeState.providerDisabled};
             return {disabled: false};
         }
@@ -125,7 +128,7 @@ mock.module("@stores/config", () => ({
         isCanary: false
     }
 }));
-mock.module("@ui/settings/components/dropdown", () => ({"default": () => <div data-setting="dropdown" />}));
+mock.module("@ui/settings/components/dropdown", () => ({"default": () => <div data-setting="dropdown" />, "useAnchorPopover": () => undefined}));
 mock.module("@ui/settings/components/number", () => ({"default": () => <div data-setting="number" />}));
 mock.module("@ui/settings/components/textbox", () => ({"default": () => <div data-setting="textbox" />}));
 mock.module("@common/i18n", () => ({t: (key: string) => key}));
@@ -134,6 +137,13 @@ mock.module("@ui/settings/components/radio", () => ({"default": () => <div data-
 mock.module("@ui/settings/components/keybind", () => ({"default": () => <div data-setting="keybind" />}));
 mock.module("@ui/settings/components/color", () => ({"default": () => <div data-setting="color" />}));
 mock.module("@ui/settings/components/position", () => ({"default": () => <div data-setting="position" />}));
+
+if (typeof (globalThis as any).ResizeObserver !== "function") {
+    (globalThis as any).ResizeObserver = class {
+        observe() {}
+        disconnect() {}
+    };
+}
 
 const {default: Group} = await import("@ui/settings/group");
 const {default: Notifications} = await import("@stores/notifications");
@@ -265,6 +275,56 @@ describe("Group with collection-backed controls", () => {
 
         await act(async () => dependentInput!.click());
         expect(callbacks).toEqual([{category: "category", setting: "dependent-toggle", value: true}]);
+    });
+
+    test("updates a collection-backed Table control and callback order without remounting Group", async () => {
+        storeState.tableRows = [{enabled: false}];
+        storeState.disabled = true;
+        const events: string[] = [];
+        const tableSetting = {
+            type: "table",
+            id: "rules",
+            name: "Rules",
+            disabled: true,
+            value: storeState.tableRows,
+            columns: {enabled: {type: "switch", label: "Enabled"}},
+            onChange: (value: unknown) => {events.push(`setting:${String((value as Array<{enabled: boolean}>)[0]?.enabled)}`);}
+        };
+        function onTableChange(setting: string, value: unknown): void;
+        function onTableChange(category: string, setting: string, value: unknown): void;
+        function onTableChange(_first: string, second: unknown, third?: unknown): void {
+            const value = third === undefined ? second : third;
+            events.push(`panel:${String((value as Array<{enabled: boolean}>)[0]?.enabled)}`);
+            storeState.tableRows = value as typeof storeState.tableRows;
+            emitStoreChange();
+        }
+        const inputSelector = "[data-row] input[type=checkbox]";
+
+        await act(async () => root.render(
+            <Group
+                id="category"
+                name="Settings"
+                collection="collection"
+                settings={[tableSetting]}
+                onChange={onTableChange}
+            />
+        ));
+
+        const disabledInput = container.querySelector<HTMLInputElement>(inputSelector)!;
+        expect(disabledInput.disabled).toBe(true);
+        await act(async () => disabledInput.click());
+        expect(events).toEqual([]);
+
+        storeState.disabled = false;
+        await act(async () => emitStoreChange());
+        const enabledInput = container.querySelector<HTMLInputElement>(inputSelector)!;
+        expect(enabledInput).toBe(disabledInput);
+        expect(enabledInput.disabled).toBe(false);
+
+        await act(async () => enabledInput.click());
+        expect(events).toEqual(["setting:true", "panel:true"]);
+        expect(storeState.tableRows).toEqual([{enabled: true}]);
+        expect(container.querySelector<HTMLInputElement>(inputSelector)!.checked).toBe(true);
     });
 
     test("does not strip disabled on non-context settings", async () => {
