@@ -214,7 +214,9 @@ else if (scenario.mode === "constructor") {
     assert.equal("trafficLightPosition" in options, !scenario.nativeFrame);
     assert.equal(process.env.BETTERDISCORD_NATIVE_FRAME, String(scenario.nativeFrame ?? false));
     assert.equal(process.env.BETTERDISCORD_IN_APP_TRAFFIC_LIGHTS, undefined);
-    assert.equal(options.backgroundColor, scenario.effect || scenario.transparency ? "#00000000" : "#123456");
+    const expectedBackground = scenario.effect === "material" && settings.backgroundMaterial === "none"
+        ? "FFFFFF" : scenario.effect || scenario.transparency ? "#00000000" : "#123456";
+    assert.equal(options.backgroundColor, expectedBackground);
     assert.equal(options.transparent, scenario.transparency ? true : undefined);
     assert.equal(options.vibrancy, scenario.effect === "vibrancy" ? settings.vibrancy : undefined);
     assert.equal(options.visualEffectState, scenario.effect === "vibrancy" ? settings.visualEffectState || "followWindow" : undefined);

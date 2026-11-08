@@ -26,6 +26,27 @@ toolchain requirements.
 Integration sections retain their original evidence and revision context.
 [Documentation index](README.md) · [Project overview](../README.md)
 
+## 1.14.6 native material clearing and classname ancestry
+
+The reviewed `42562e12..033d4cb1` range's constructor correction uses upstream's
+opaque background value when Windows material is `none`, retaining transparent
+color for active materials. It stays inside the fork's existing OS/API capability
+guard; older or unsupported systems do not receive an unsupported constructor
+option. The native-window IPC guards, vibrancy behavior and macOS wrapper/recovery
+flow remain unchanged. Existing constructor fixtures exercise both material
+values; native Windows appearance is not established by the macOS test harness.
+
+The second upstream classname correction, `0169ecd2`, preserves both one- and
+three-argument CSS factories. The fork already contains that optional-argument
+matcher alongside scientific module IDs and the optional strict-mode prefix.
+This hunk is therefore already covered: retain those additional supported cases
+and record the upstream commit through the final reviewed ancestry merge. The
+first upstream one-argument-only matcher must not replace the current expression.
+The source comparator and early-loader regression verify these shapes; this is
+not a new native validation claim. The affected native-window group passes 19
+tests with 54 assertions in 3.60 seconds, and the early-loader wrapper passes
+with five outer assertions in 2.28 seconds. Scoped ESLint passes.
+
 ## Open BetterDiscord branding and footer diagnostics
 
 Fork-owned UI labels, editor/window titles, commands, loading text, generated
