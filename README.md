@@ -1,4 +1,4 @@
-# Open BetterDiscord macOS fork
+# Open BetterDiscord (macOS fork)
 
 <div align="center">
 <img src=".images/Open-Better-Discord-two-line.svg" alt="Open BetterDiscord wordmark" width="800">

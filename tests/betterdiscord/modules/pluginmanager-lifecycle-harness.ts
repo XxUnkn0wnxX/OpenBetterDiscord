@@ -46,6 +46,7 @@ mock.module("@stores/json", () => ({"default": {get: () => undefined, set: (_fil
 mock.module("@common/i18n", () => ({t: (key: string, options?: {method?: string}) => options?.method ?? key}));
 mock.module("@common/utils", () => ({parseJsDoc}));
 mock.module("@ui/modals", () => ({"default": {showAddonError: (error: Error) => {errors.push(error);}}}));
+mock.module("@ui/settings", () => ({"default": {openSettingsPage: () => {}}}));
 mock.module("@ui/misc/addoneditor", () => ({"default": () => null}));
 mock.module("@ui/floatingwindows", () => ({"default": {isOpened: () => false, close: () => {}}}));
 mock.module("@polyfill/remote", () => ({"default": {editor: {close: (_type: string, filename: string) => {editorCloses.push(filename);}}}}));

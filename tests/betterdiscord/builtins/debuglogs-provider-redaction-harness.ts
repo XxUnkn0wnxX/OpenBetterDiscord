@@ -128,13 +128,13 @@ try {
     await api.fetch(gitlab, {headers: {"PRIVATE-TOKEN": "dummy-public-token-2468"}});
     assert(lineCount() === 0 && events.length === 0, "Public requests emitted managed token-use diagnostics.");
     await fetchAddonUpdate(release, undefined, "Managed.plugin.js");
-    assert(lineCount() === 1 && text().includes("Managed.plugin.js: github.com update request succeeded (HTTP 204) using BetterDiscord token ****3456."), "Completed managed request did not log its truthful caller/host/status and masked token.");
+    assert(lineCount() === 1 && text().includes("Managed.plugin.js: github.com update request succeeded (HTTP 204) using Open BetterDiscord token ****3456."), "Completed managed request did not log its truthful caller/host/status and masked token.");
     assert(consoleLines[0].level === "info" && writes.some(value => value.includes("[CONSOLE:INFO]") && value.includes("Managed.plugin.js: github.com")), "Info success did not reach the actual debug writer.");
     await fetchAddonUpdate(release, {headers: {Authorization: "token dummy-supplied-token-7890"}});
     assert(lineCount() === 2 && text().includes("unknown addon: github.com") && text().includes("a supplied token ****7890."), "Caller credential success did not log safely with an honest unknown caller.");
     await fetchAddonUpdate(gitlab);
     await fetchAddonUpdate(`${gitlab}?access_token=dummy-query-token-2468`);
-    assert(lineCount() === 4 && text().includes("gitlab.com") && text().includes("BetterDiscord token ****.") && text().includes("a supplied token ****2468."), "Short/query credentials were not masked correctly.");
+    assert(lineCount() === 4 && text().includes("gitlab.com") && text().includes("Open BetterDiscord token ****.") && text().includes("a supplied token ****2468."), "Short/query credentials were not masked correctly.");
     const supplied = "dummy-gist-token-4567";
     await fetchAddonUpdate("https://api.github.com/gists/abc123", {headers: {Authorization: `Bearer ${supplied}`}}, `Caller-${supplied}.plugin.js`);
     assert(lineCount() === 5 && text().includes("Caller-****4567.plugin.js"), "Captured caller credentials were not redacted from addon labels.");

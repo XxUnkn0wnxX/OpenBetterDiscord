@@ -127,13 +127,43 @@ with five outer assertions in 2.28 seconds. Scoped ESLint passes.
 Fork-owned UI labels, editor/window titles, commands, loading text, generated
 recovery/debug report headings and documentation use **Open BetterDiscord**;
 presentation abbreviations use **OBD**. Repository links use `OpenBetterDiscord`.
-The README title is `Open BetterDiscord macOS fork`; other presentation does not
+The README title is `Open BetterDiscord (macOS fork)`; other presentation does not
 repeat that platform suffix. Preserve this naming when adapting upstream hunks.
 The loading indicator imports the tracked
 [`obd-loading-indicator.svg`](../assets/svgs/obd-loading-indicator.svg) through the
 existing SVG text loader and embeds a data URL at its existing 20×20 size, with
 the same opacity animation. Its geometry fits that box. Local and GitHub builds
 use that repository asset without any scratch-directory or runtime file access.
+
+The shared [`Logo`](../src/betterdiscord/ui/logo.tsx) now contains the approved
+three-path OBD artwork directly. Default rendering uses the filled monochrome
+mark; `accent` rendering uses transparent O/B interiors with thin inherited-color
+outlines and a filled D. This user-selected treatment replaces the old accented
+fill. Keep caller colors, `secondaryColor`, sizes, refs, stroke overrides, the
+older-Lucide renderer guard and stable `lucide-betterdiscord` CSS class. The
+Settings collection icon and addon-update/recovery warning notices inherit this
+shared replacement; the dormant core-update notice remains dormant.
+The [branding and UI map](branding.md) records original export names, approved
+reference SVGs, actual source inputs and exact UI callers. Reference copies and
+PNG previews live in `.images/internals/`; those files are not runtime imports.
+
+Focused checks with the installed React/Lucide renderer verify the approved
+geometry, default/outlined selection, inherited and explicit colors,
+`secondaryColor`, refs, class/sizing, explicit zero/absolute stroke widths and both
+Discord adapters (27 assertions). Astra reviewed the renderer and found no source
+blocker. Its stroke qualification is preserved: explicit widths retain SVG units
+and Lucide calculations rather than promising identical pixel widths after a
+viewBox change.
+
+Final source validation before the separately requested release-path migration
+passes 581 tests, with 24 existing legacy-Bun formatter skips and no failures.
+Full ESLint, project type checking, declaration generation and the strict public
+type consumer also pass. The full run exposed three fixture issues: isolated
+locale state, stale expected product text in token-use logs, and a settings UI
+service import in the real plugin-manager harness. The fixtures now isolate that
+state/dependency and expect the approved label; production token handling and
+masking/lifecycle assertions remain unchanged. Astra independently confirmed
+those fixture repairs retain their coverage. Native validation remains separate.
 
 The README uses the supplied transparent two-line SVG wordmark from `.images/`;
 both supplied SVG/PNG variants are retained unchanged. Keep the existing badge

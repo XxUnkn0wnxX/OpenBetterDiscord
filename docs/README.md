@@ -5,6 +5,7 @@
 | I want to… | Read |
 | --- | --- |
 | See what this fork intentionally adds or changes | [Fork overview](fork-overview.md) |
+| Find where the approved logos and loading mark appear | [Branding and UI map](branding.md) |
 | Build, inject or remove this fork | [Manual macOS installation](manual-install.md) |
 | Check or install plugin/theme updates | [Addon updater](addon-updater.md) |
 | Set up GitHub, GitLab or git.slowb.ro authentication | [Access tokens](provider-tokens.md) |

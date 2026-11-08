@@ -1,15 +1,13 @@
 import {expect, test} from "bun:test";
-import i18n from "../../../src/common/i18n";
+import path from "node:path";
+
 test("localized update failures fall back to the fork release guidance", () => {
-    const original = i18n.locale;
-    try {
-        for (const locale of i18n.supportedLocales) {
-            i18n.setLocale(locale as typeof i18n.locale);
-            const message = i18n.t("Updater.updateFailedMessage");
-            expect(message).toContain("Open BetterDiscord");
-            expect(message).toContain("github.com/XxUnkn0wnxX/OpenBetterDiscord");
-            expect(message).not.toContain("betterdiscord.app");
-        }
-    }
-    finally {i18n.setLocale(original);}
+    const result = Bun.spawnSync({
+        cmd: [process.execPath, "test", path.join(import.meta.dir, "branding-locales-harness.ts")],
+        cwd: path.join(import.meta.dir, "../../.."),
+        stdout: "pipe",
+        stderr: "pipe"
+    });
+    const output = [result.stdout, result.stderr].map(value => new TextDecoder().decode(value).trim()).filter(Boolean).join("\n");
+    expect(result.exitCode, output).toBe(0);
 });

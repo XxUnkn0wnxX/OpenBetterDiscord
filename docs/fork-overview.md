@@ -27,6 +27,7 @@ range does not mean every version has passed native validation.
 
 | Feature | Behavior |
 | --- | --- |
+| Fork identity and artwork | Open BetterDiscord labels and OBD marks identify the fork. Shared icons inherit caller colors for idle, selected and hover states. See the [branding and UI map](branding.md) for artwork replacements and source locations. |
 | macOS build and recovery | Local Zsh wrappers build, inject and remove Open BetterDiscord for Stable, PTB and Canary. Update recovery preserves the wrapped application payload and coordinates identity-matched handoffs with OpenAsar. See the [manual workflow](manual-install.md). |
 | Identity-aware addon updates | Plugin and theme updates can use declared `@updateUrl` sources and eligible Addon Store entries. Identity is checked before version comparison; the highest comparable newer candidate wins, and `@updateUrl` wins an equal-version tie. A filename match alone cannot replace an unrelated addon. Optional notifications default on and provide success toasts and persistent failure cards. See the [updater guide](addon-updater.md). |
 | Optional provider tokens | GitHub, GitLab.com and git.slowb.ro (Forgejo) tokens can authenticate eligible requests from Open BetterDiscord's managed addon updater. They do not become credentials for public `BdApi.Net.fetch` calls or independent plugin updaters. See [token setup](provider-tokens.md). |
