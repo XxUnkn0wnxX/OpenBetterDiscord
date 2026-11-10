@@ -1501,7 +1501,7 @@ export class AddonUpdater {
                 ))
             ],
             type: "info",
-            icon: () => React.createElement(Logo, {size: 16, accent: true}),
+            icon: () => React.createElement(Logo, {size: 16}),
             duration: Infinity,
             onClose: () => {this.#noticeVisible = false;},
             actions: [

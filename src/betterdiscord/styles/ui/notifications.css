@@ -173,6 +173,10 @@
     background-color: var(--control-secondary-background-hover);
 }
 
+.bd-notification-persistent-bottom {
+    padding-bottom: 14px;
+}
+
 .bd-notification-progress {
     height: 4px;
     transition: width 0.1s linear;

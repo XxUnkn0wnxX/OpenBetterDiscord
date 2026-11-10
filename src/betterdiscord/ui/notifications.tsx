@@ -124,7 +124,7 @@ const NotificationItem = ({entry}: {entry: NotificationEntry;}) => {
                     <notification.render notification={notification} />
                 </ErrorBoundary>
                 : <>
-                    <div className={"bd-notification-content"}>
+                    <div className={`bd-notification-content${isPersistent && actions.length === 0 ? " bd-notification-persistent-bottom" : ""}`}>
                         <div className="bd-notification-header">
                             <div className="bd-notification-icon">
                                 <div className="bd-notification-icon">
@@ -158,7 +158,7 @@ const NotificationItem = ({entry}: {entry: NotificationEntry;}) => {
                         )}
                     </div>
                     {actions.length > 0 && (
-                        <div className="bd-notification-footer">
+                        <div className={`bd-notification-footer${isPersistent ? " bd-notification-persistent-bottom" : ""}`}>
                             {actions.map((action, index) => {
                                 const color = ButtonColors[action?.color?.toUpperCase() as keyof typeof ButtonColors] ? `bd-button-color-${action?.color}` : Button.Colors.PRIMARY;
                                 const look = ButtonLooks[action?.look?.toUpperCase() as keyof typeof ButtonLooks] ? `bd-button-${action?.look}` : Button.Looks.FILLED;

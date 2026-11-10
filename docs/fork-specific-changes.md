@@ -242,8 +242,11 @@ mark; `accent` rendering uses transparent O/B interiors with thin inherited-colo
 outlines and a filled D. This user-selected treatment replaces the old accented
 fill. Keep caller colors, `secondaryColor`, sizes, refs, stroke overrides, the
 older-Lucide renderer guard and stable `lucide-betterdiscord` CSS class. The
-Settings collection icon and addon-update/recovery warning notices inherit this
-shared replacement; the dormant core-update notice remains dormant.
+Settings collection icon and recovery warning notice inherit this shared
+replacement; the addon-update notice explicitly uses the filled monochrome mark
+for visibility at its 16-pixel size. The dormant core-update notice remains
+dormant. Source confirms the caller selection; native visual confirmation is
+pending.
 The [branding and UI map](branding.md) records original export names, approved
 reference SVGs, actual source inputs and exact UI callers. Reference copies and
 PNG previews live in `.images/internals/`; those files are not runtime imports.
@@ -3311,6 +3314,15 @@ suite passes with 460 passes, 24 expected skips, 1,277 expectations, and 0
 failures; full ESLint and typecheck pass. Targeted stylelint reports the same 13
 pre-existing `notifications.css` warnings before and after the adaptation, with
 no warning introduced by the new declarations.
+
+Persistent standard notifications now receive 14 pixels of bottom padding on
+their footer, or on the content section when they have no actions. This replaces
+the bottom space normally supplied by the timed progress bar for persistent
+cards. Timed-card spacing and the custom `render` lifecycle remain unchanged.
+Retire this private spacing hunk when upstream supplies equivalent spacing for
+persistent cards.
+This behavior is confirmed from the renderer and CSS source; native visual
+confirmation is pending.
 
 The fork keeps that public behavior with private compatibility plumbing:
 
